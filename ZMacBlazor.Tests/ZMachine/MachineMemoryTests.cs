@@ -10,13 +10,14 @@ namespace ZMacBlazor.Tests.ZMachine
     public class MachineMemoryTests
     {
         [Fact]
-        public void CanLoadMemoryFromDataFile()
+        public void ReadsHeader()
         {
             var file = File.OpenRead(@"Data\ZORK1.DAT");
             var memory = new MachineMemory();
             memory.Load(file);
 
             Assert.Equal(3, memory.Version);
+            Assert.Equal(14158, memory.HighMemory);
         }
     }
 }

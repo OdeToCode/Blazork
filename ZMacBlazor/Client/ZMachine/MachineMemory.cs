@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using ZMacBlazor.Client.ZMachine.Address;
 
 namespace ZMacBlazor.Client.ZMachine
 {
@@ -21,6 +22,25 @@ namespace ZMacBlazor.Client.ZMachine
             get { return contents[0]; }
         }
 
+        public short HighMemory
+        {
+            get { return ByteAddress.ToShort(contents, 4); }
+        }
+
+        public short StartingProgramCounter 
+        {
+            get
+            {
+                if(Version < 6)
+                {
+                    return ByteAddress.ToShort(contents, 6);
+                }
+                else
+                {
+                    return PackedAddress.ToShort(contents, 6);
+                }
+            }
+        }
 
 
         byte[] contents;
