@@ -7,11 +7,9 @@ namespace ZMacBlazor.Client.ZMachine.Address
 {
     public static class PackedAddress
     {
-        public static short ToShort(byte[] bytes, int offset)
+        public static ushort ToShort(byte[] bytes, int offset)
         {
             throw new NotImplementedException();
-
-            var value = ByteAddress.ToShort(bytes, offset);
             
             // ***[1.0] A packed address specifies where a routine or string begins in high memory. Given a packed address P, the formula to obtain the corresponding byte address B is:
 
@@ -23,8 +21,7 @@ namespace ZMacBlazor.Client.ZMachine.Address
 
             //8P           Version 8
             //R_O and S_O are the routine and strings offsets(specified in the header as words at $28 and $2a, respectively).
-
-            return value;
+          
         }
     }
 }

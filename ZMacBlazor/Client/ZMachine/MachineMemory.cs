@@ -17,31 +17,48 @@ namespace ZMacBlazor.Client.ZMachine
             }
         }
 
-        public byte Version
-        {
-            get { return contents[0]; }
-        }
+        public byte Version => contents[Header.VERSION];
+    
+        public ushort HighMemory => ByteAddress.ToShort(contents, Header.HIGHMEMORY);
 
-        public short HighMemory
-        {
-            get { return ByteAddress.ToShort(contents, 4); }
-        }
-
-        public short StartingProgramCounter 
+        public ushort StartingProgramCounter 
         {
             get
             {
                 if(Version < 6)
                 {
-                    return ByteAddress.ToShort(contents, 6);
+                    return ByteAddress.ToShort(contents, Header.PC);
                 }
                 else
                 {
-                    return PackedAddress.ToShort(contents, 6);
+                    return PackedAddress.ToShort(contents, Header.PC);
                 }
             }
         }
 
+        public ushort Dictionary => ByteAddress.ToShort(contents, Header.DICTIONARY);
+
+        public ushort ObjectTable => ByteAddress.ToShort(contents, Header.OBJECTTABLE);
+
+        public int FileLength
+        {
+            get 
+            {
+                var value = ByteAddress.ToShort(contents, Header.FILELENGTH);
+                if(Version <= 3)
+                {
+                    return value * 2;
+                }
+                else if(Version <= 5)
+                {
+                    return value * 4;
+                }
+                else
+                {
+                    return value * 8;
+                }
+            }
+        }
 
         byte[] contents;
     }

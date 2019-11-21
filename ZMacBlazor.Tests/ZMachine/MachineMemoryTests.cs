@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using Xunit;
 using ZMacBlazor.Client.ZMachine;
 
@@ -17,7 +14,10 @@ namespace ZMacBlazor.Tests.ZMachine
             memory.Load(file);
 
             Assert.Equal(3, memory.Version);
-            Assert.Equal(14158, memory.HighMemory);
+            Assert.Equal(20023, memory.HighMemory);
+            Assert.Equal(20229, memory.StartingProgramCounter);
+            Assert.Equal(688, memory.ObjectTable);
+            Assert.Equal(15137, memory.Dictionary);
         }
     }
 }
