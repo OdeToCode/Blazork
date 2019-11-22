@@ -18,7 +18,7 @@ namespace ZMacBlazor.Tests.ZMachine
             var instruction = decoder.Decode(memory.At(memory.StartingProgramCounter));
             
             Assert.Equal(InstructionForm.VarForm, instruction.Form);
-            Assert.Equal(OperandCount.Two, instruction.OpCount);
+            Assert.Equal(OperandCount.Var, instruction.OpCount);
             Assert.Equal(0, instruction.OpCode);
         }
     }

@@ -9,7 +9,7 @@ namespace ZMacBlazor.Tests.ZMachine
         public void BottomFiveTests()
         {
             Assert.Equal(0x0F, Bits.BottomFive(0b0000_1111));
-            Assert.Equal(0x01, Bits.BottomFive(0b0001_0001));
+            Assert.Equal(0x11, Bits.BottomFive(0b0001_0001));
             Assert.Equal(0x10, Bits.BottomFive(0b0001_0000));
             Assert.Equal(0x12, Bits.BottomFive(0b0001_0010));
         }

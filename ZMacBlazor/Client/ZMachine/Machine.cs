@@ -19,6 +19,6 @@ namespace ZMacBlazor.Client.ZMachine
 
         ushort programCounter;
         MachineMemory memory;
-        MachineStack stack;
+        
     }
 }
