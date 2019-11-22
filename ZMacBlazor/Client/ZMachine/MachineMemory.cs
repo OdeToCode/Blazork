@@ -17,6 +17,11 @@ namespace ZMacBlazor.Client.ZMachine
             }
         }
 
+        public ReadOnlySpan<byte> At(ushort address)
+        {
+            return contents.AsSpan(address);
+        }
+
         public byte Version => contents[Header.VERSION];
     
         public ushort HighMemory => ByteAddress.ToShort(contents, Header.HIGHMEMORY);
