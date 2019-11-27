@@ -1,14 +1,26 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 
 namespace ZMacBlazor.Client.ZMachine.Instructions
 {
     public class Instruction
     {
+        private readonly ILogger<Instruction> logger;
+
+        public Instruction(ILogger<Instruction> logger)
+        {
+            this.logger = logger;
+        }
+
         public Instruction(ReadOnlySpan<byte> bytes)
         {
             Form = DecodeForm(bytes[0]);
             OpCount = DecodeOpCount(bytes[0]);
             OpCode = DecodeOpCode(bytes);
+
+
+            logger.LogInformation($"Instruction decoded: {Form} {OpCount} {OpCode}");
         }
 
         private byte DecodeOpCode(ReadOnlySpan<byte> bytes)
@@ -60,6 +72,9 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
         public InstructionForm Form { get; }
         public OperandCount OpCount { get; }
-        public byte OpCode { get;  }
+        public byte OpCode { get; }
+        public ICollection<OperandType> OperandTypes { get; }
+        public ICollection<ushort> Operands { get; }
     }
 }
+ 
