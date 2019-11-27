@@ -27,8 +27,4 @@
     <ProjectReference Include="..\ZMacBlazor\Client\ZMacBlazor.Client.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="NewFolder\" />
-  </ItemGroup>
-
 </Project>

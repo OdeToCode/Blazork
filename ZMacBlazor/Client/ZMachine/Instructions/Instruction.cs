@@ -6,21 +6,11 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 {
     public class Instruction
     {
-        private readonly ILogger<Instruction> logger;
-
-        public Instruction(ILogger<Instruction> logger)
-        {
-            this.logger = logger;
-        }
-
         public Instruction(ReadOnlySpan<byte> bytes)
         {
             Form = DecodeForm(bytes[0]);
             OpCount = DecodeOpCount(bytes[0]);
             OpCode = DecodeOpCode(bytes);
-
-
-            logger.LogInformation($"Instruction decoded: {Form} {OpCount} {OpCode}");
         }
 
         private byte DecodeOpCode(ReadOnlySpan<byte> bytes)
