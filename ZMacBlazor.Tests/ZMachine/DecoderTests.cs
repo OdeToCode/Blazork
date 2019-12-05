@@ -24,12 +24,10 @@ namespace ZMacBlazor.Tests.ZMachine
             var memory = new MachineMemory();
             memory.Load(file);
 
-            var decoder = new Decoder(testLogger);
+            var decoder = new InstructionDecoder(testLogger);
             var instruction = decoder.Decode(memory.At(memory.StartingProgramCounter));
-            
-            Assert.Equal(InstructionForm.VarForm, instruction.Form);
-            Assert.Equal(OperandCount.Var, instruction.OpCount);
-            Assert.Equal(0, instruction.OpCode);
+
+            Assert.IsType<VarCall>(instruction);
         }
     }
 }

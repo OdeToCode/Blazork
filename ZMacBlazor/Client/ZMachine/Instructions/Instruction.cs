@@ -4,6 +4,22 @@ using System.Collections.Generic;
 
 namespace ZMacBlazor.Client.ZMachine.Instructions
 {
+
+    public interface IInstruction
+    {
+        void Execute(Machine machine) { }
+    }
+
+    public class VarCall : IInstruction
+    {
+
+    }
+
+    public class VarStoreW : IInstruction
+    {
+        
+    }
+
     // f - form
     // o - opcode
     // t - opcode type
@@ -38,74 +54,84 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
     // 
     // if(t == 0) 2OP else VAROP 
 
+    //private OperandCount DecodeOpCount(byte value)
+    //{
+    //    OperandCount forShort(byte v)
+    //    {
+    //        if (Bits.FourFiveSet(v)) return OperandCount.Zero;
+    //        return OperandCount.One;
+    //    }
 
-    public class Instruction
+    //    OperandCount forVar(byte v)
+    //    {
+    //        if (Bits.FiveSet(v)) return OperandCount.Var;
+    //        return OperandCount.Two;
+    //    };
+
+    //    return Form switch
+    //    {
+    //        InstructionForm.ShortForm => forShort(value),
+    //        InstructionForm.LongForm => OperandCount.Two,
+    //        InstructionForm.VarForm => forVar(value),
+    //        InstructionForm.ExtForm => OperandCount.Var,
+    //        _ => throw new InvalidOperationException("Unknown instruction form")
+    //    };
+
+    public class InstructionDecoder
     {
-        public Instruction(ReadOnlySpan<byte> bytes)
-        {
-            Form = DecodeForm(bytes[0]);
-            OpCount = DecodeOpCount(bytes[0]);
-            OpCode = DecodeOpCode(bytes);
-            OperandTypes = DecodeOperandTypes(bytes);
-        }
+        private readonly ILogger logger;
 
-        private ICollection<OperandType> DecodeOperandTypes(ReadOnlySpan<byte> bytes)
+        public InstructionDecoder(ILogger logger)
         {
-            
+            this.logger = logger;
         }
-
-        private byte DecodeOpCode(ReadOnlySpan<byte> bytes)
+        
+        public IInstruction Decode(ReadOnlySpan<byte> bytes)
         {
-            return Form switch
+            var instruction = bytes[0] switch
             {
-                InstructionForm.ShortForm => Bits.BottomFour(bytes[0]),
-                InstructionForm.LongForm => Bits.BottomFive(bytes[0]),
-                InstructionForm.VarForm => Bits.BottomFive(bytes[0]),
-                InstructionForm.ExtForm => bytes[1],
-                _ => throw new InvalidOperationException("Invalid instruction form")
+                0xBE => CreateExtInstruction(bytes),
+                var v when Bits.SixSevenSet(v) => CreateVarInstruction(bytes),
+                var v when Bits.SevenSet(v) => CreateShortInstruction(bytes),
+                _ => CreateLongInstruction(bytes)
+            };
+
+            logger.LogInformation($"Decoded {instruction.GetType()}");
+            return instruction;
+        }
+
+        private IInstruction CreateExtInstruction(ReadOnlySpan<byte> bytes)
+        {
+            return bytes[1] switch
+            {
+                _ => throw new InvalidOperationException("Unknown OpCode")
             };
         }
 
-        private OperandCount DecodeOpCount(byte value)
+        private IInstruction CreateShortInstruction(ReadOnlySpan<byte> bytes)
         {
-            OperandCount forShort(byte v)
+            return Bits.BottomFour(bytes[0]) switch
             {
-                if (Bits.FourFiveSet(v)) return OperandCount.Zero;
-                return OperandCount.One;
-            }
-
-            OperandCount forVar(byte v)
-            {
-                if (Bits.FiveSet(v)) return OperandCount.Var;
-                return OperandCount.Two;
-            };
-
-            return Form switch
-            {
-                InstructionForm.ShortForm => forShort(value),
-                InstructionForm.LongForm => OperandCount.Two,
-                InstructionForm.VarForm => forVar(value),
-                InstructionForm.ExtForm => OperandCount.Var,
-                _ => throw new InvalidOperationException("Unknown instruction form")
+                _ => throw new InvalidOperationException("Unknown OpCode")
             };
         }
 
-        private InstructionForm DecodeForm(byte value)
+        private IInstruction CreateLongInstruction(ReadOnlySpan<byte> bytes)
         {
-            return value switch
+            return Bits.BottomFive(bytes[0]) switch
             {
-                0xBE => InstructionForm.ExtForm,
-                var v when Bits.SixSevenSet(v) => InstructionForm.VarForm,
-                var v when Bits.SevenSet(v) => InstructionForm.ShortForm,
-                _ => InstructionForm.LongForm
+                _ => throw new InvalidOperationException("Unknown OpCode")
             };
         }
 
-        public InstructionForm Form { get; }
-        public OperandCount OpCount { get; }
-        public byte OpCode { get; }
-        public ICollection<OperandType> OperandTypes { get; }
-        public ICollection<ushort> Operands { get; }
+        private IInstruction CreateVarInstruction(ReadOnlySpan<byte> bytes)
+        {
+            return Bits.BottomFive(bytes[0]) switch
+            {
+                0x00 => new VarCall(),
+                0x01 => new VarStoreW(),
+                _ => throw new InvalidOperationException("Unknown OpCode")
+            };
+        }
     }
 }
- 
