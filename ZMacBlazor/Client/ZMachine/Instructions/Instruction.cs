@@ -10,14 +10,14 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         void Execute(Machine machine) { }
     }
 
-    public class VarCall : IInstruction
+    public class VCall : IInstruction
     {
 
     }
 
-    public class VarStoreW : IInstruction
+    public class StoreW : IInstruction
     {
-        
+
     }
 
     // f - form
@@ -77,6 +77,19 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
     //        _ => throw new InvalidOperationException("Unknown instruction form")
     //    };
 
+    // Per the specs:
+    // $00 -- $1f  long      2OP small constant, small constant
+    // $20 -- $3f  long      2OP small constant, variable
+    // $40 -- $5f  long      2OP variable, small constant
+    // $60 -- $7f  long      2OP variable, variable
+    // $80 -- $8f  short     1OP large constant
+    // $90 -- $9f  short     1OP small constant
+    // $a0 -- $af  short     1OP variable
+    // $b0 -- $bf  short     0OP
+    // except $be  extended  opcode given in next byte
+    // $c0 -- $df  variable  2OP(operand types in next byte)
+    // $e0 -- $ff  variable  VAR(operand types in next byte(s))
+
     public class InstructionDecoder
     {
         private readonly ILogger logger;
@@ -90,47 +103,96 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         {
             var instruction = bytes[0] switch
             {
-                0xBE => CreateExtInstruction(bytes),
-                var v when Bits.SixSevenSet(v) => CreateVarInstruction(bytes),
-                var v when Bits.SevenSet(v) => CreateShortInstruction(bytes),
-                _ => CreateLongInstruction(bytes)
+                0xBE => DecodeExt(bytes),
+                var v when Bits.SixSevenSet(v) => DecodeVar(bytes),
+                var v when Bits.SevenSet(v) => DecodeShort(bytes),
+                _ => DecodeLong(bytes)
             };
 
             logger.LogInformation($"Decoded {instruction.GetType()}");
             return instruction;
         }
 
-        private IInstruction CreateExtInstruction(ReadOnlySpan<byte> bytes)
+        private IInstruction DecodeExt(ReadOnlySpan<byte> bytes)
         {
-            return bytes[1] switch
+            var opcode = bytes[1];
+            return CreateExtInstruction(opcode);
+        }
+
+        private IInstruction DecodeShort(ReadOnlySpan<byte> bytes)
+        {
+            var opcode = Bits.BottomFour(bytes[0]);
+
+            if (Bits.FourFiveSet(bytes[0]))
             {
-                _ => throw new InvalidOperationException("Unknown OpCode")
+                return CreateOp0Instruction(opcode);
+            }
+            else
+            {
+                return CreateOp1Instruction(opcode);
+            }
+        }
+
+        private IInstruction DecodeLong(ReadOnlySpan<byte> bytes)
+        {
+            var opcode = Bits.BottomFive(bytes[0]);
+
+            return CreateOp2Instruction(opcode);
+        }
+
+        private IInstruction DecodeVar(ReadOnlySpan<byte> bytes)
+        {
+            var opcode = Bits.BottomFive(bytes[0]);
+
+            if (Bits.FiveSet(bytes[0]))
+            {
+                return CreateVarInstruction(opcode);
+            }
+            else
+            {
+                return CreateOp2Instruction(opcode);
+            }
+        }
+
+        private IInstruction CreateVarInstruction(byte opcode)
+        {
+            return opcode switch
+            {
+                0x00 => new VCall(),
+                0x01 => new StoreW(),
+                _ => throw new InvalidOperationException($"Unknown VAR opcode {opcode:X}")
             };
         }
 
-        private IInstruction CreateShortInstruction(ReadOnlySpan<byte> bytes)
+        private IInstruction CreateOp1Instruction(byte opcode)
         {
-            return Bits.BottomFour(bytes[0]) switch
+            return opcode switch
             {
-                _ => throw new InvalidOperationException("Unknown OpCode")
+                _ => throw new InvalidOperationException($"Unknown OP1 opcode {opcode:X}")
             };
         }
 
-        private IInstruction CreateLongInstruction(ReadOnlySpan<byte> bytes)
+        private IInstruction CreateOp0Instruction(byte opcode)
         {
-            return Bits.BottomFive(bytes[0]) switch
+            return opcode switch
             {
-                _ => throw new InvalidOperationException("Unknown OpCode")
+                _ => throw new InvalidOperationException($"Unknown OP0 opcode {opcode:X}")
             };
         }
 
-        private IInstruction CreateVarInstruction(ReadOnlySpan<byte> bytes)
+        private IInstruction CreateExtInstruction(byte opcode)
         {
-            return Bits.BottomFive(bytes[0]) switch
+            return opcode switch
             {
-                0x00 => new VarCall(),
-                0x01 => new VarStoreW(),
-                _ => throw new InvalidOperationException("Unknown OpCode")
+                _ => throw new InvalidOperationException($"Unknown EXT opcode {opcode:X}")
+            };
+        }
+
+        private IInstruction CreateOp2Instruction(byte opcode)
+        {
+            return opcode switch
+            {
+                _ => throw new InvalidOperationException($"Unknown OP2 opcode {opcode:X}")
             };
         }
     }

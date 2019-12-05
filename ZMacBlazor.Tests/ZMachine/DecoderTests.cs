@@ -27,7 +27,7 @@ namespace ZMacBlazor.Tests.ZMachine
             var decoder = new InstructionDecoder(testLogger);
             var instruction = decoder.Decode(memory.At(memory.StartingProgramCounter));
 
-            Assert.IsType<VarCall>(instruction);
+            Assert.IsType<VCall>(instruction);
         }
     }
 }
