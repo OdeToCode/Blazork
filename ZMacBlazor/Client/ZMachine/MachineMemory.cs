@@ -17,8 +17,22 @@ namespace ZMacBlazor.Client.ZMachine
             }
         }
 
-        public ReadOnlySpan<byte> At(ushort address)
+        public byte ByteAt(int address)
         {
+            return contents[address];
+        }
+
+        public ushort WordAt(int address)
+        {
+            return Bits.MakeWord(SpanAt(address));
+        }
+
+        public ReadOnlySpan<byte> SpanAt(int address, int length = 0)
+        {
+            if (length != 0)
+            {
+                return contents.AsSpan(address, length);
+            }
             return contents.AsSpan(address);
         }
 

@@ -6,19 +6,18 @@ namespace ZMacBlazor.Client.ZMachine
     {
         public void Load(Stream memoryBytes)
         {
-            memory = new MachineMemory();
-            memory.Load(memoryBytes);
+            Memory = new MachineMemory();
+            Memory.Load(memoryBytes);
 
-            programCounter = memory.StartingProgramCounter;
+            PC = Memory.StartingProgramCounter;
         }
 
         public void Execute()
         {
-            
+                
         }
 
-        ushort programCounter;
-        MachineMemory memory;
-        
+        public ushort PC { get; protected set; }
+        public MachineMemory Memory { get; protected set; }  
     }
 }

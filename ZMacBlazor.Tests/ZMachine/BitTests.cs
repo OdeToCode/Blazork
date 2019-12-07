@@ -6,6 +6,25 @@ namespace ZMacBlazor.Tests.ZMachine
     public class BitTests
     {
         [Fact]
+        public void MakeWordTests()
+        {
+            Assert.Equal(65280, Bits.MakeWord(new byte[] { 0xFF, 0x00 }));
+            Assert.Equal(4080, Bits.MakeWord(new byte[] { 0x0F, 0xF0 }));
+            Assert.Equal(240, Bits.MakeWord(new byte[] { 0x00, 0xF0 }));
+            Assert.Equal(15, Bits.MakeWord(new byte[] { 0x00, 0x0F }));
+        }
+
+        [Fact]
+        public void BreakIntoTwoTests()
+        {
+            var result1 = Bits.BreakIntoTwos(0b1001_1111);
+            Assert.Equal(2, result1[0]);
+            Assert.Equal(1, result1[1]);
+            Assert.Equal(3, result1[2]);
+            Assert.Equal(3, result1[3]);
+        }
+
+        [Fact]
         public void BottomFiveTests()
         {
             Assert.Equal(0x0F, Bits.BottomFive(0b0000_1111));
