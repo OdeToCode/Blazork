@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using ZMacBlazor.Client.ZMachine.Address;
 
 namespace ZMacBlazor.Client.ZMachine
 {
@@ -68,11 +67,11 @@ namespace ZMacBlazor.Client.ZMachine
 
         public byte Version => contents[Header.VERSION];
     
-        public ushort HighMemory => ByteAddress.ToWord(contents, Header.HIGHMEMORY);
+        public ushort HighMemory => Bits.MakeWord(SpanAt(Header.HIGHMEMORY));
 
-        public ushort RoutineOffset => ByteAddress.ToWord(contents, Header.ROUTINESOFFSET);
+        public ushort RoutineOffset => Bits.MakeWord(SpanAt(Header.ROUTINESOFFSET));
 
-        public ushort StringOffset => ByteAddress.ToWord(contents, Header.STATICSTRINGSOFFSET);
+        public ushort StringOffset => Bits.MakeWord(SpanAt(Header.STATICSTRINGSOFFSET));
 
         public ushort StartingProgramCounter 
         {
@@ -80,24 +79,24 @@ namespace ZMacBlazor.Client.ZMachine
             {
                 if(Version < 6)
                 {
-                    return ByteAddress.ToWord(contents, Header.PC);
+                    return Bits.MakeWord(SpanAt(Header.PC));
                 }
                 else
                 {
-                    return PackedAddress.ToShort(contents, Header.PC);
+                    return Unpack((ushort)Header.PC);
                 }
             }
         }
 
-        public ushort Dictionary => ByteAddress.ToWord(contents, Header.DICTIONARY);
+        public ushort Dictionary => Bits.MakeWord(SpanAt(Header.DICTIONARY));
 
-        public ushort ObjectTable => ByteAddress.ToWord(contents, Header.OBJECTTABLE);
+        public ushort ObjectTable => Bits.MakeWord(SpanAt(Header.OBJECTTABLE));
 
         public int FileLength
         {
             get 
             {
-                var value = ByteAddress.ToWord(contents, Header.FILELENGTH);
+                var value = Bits.MakeWord(SpanAt(Header.FILELENGTH));
                 if(Version <= 3)
                 {
                     return value * 2;

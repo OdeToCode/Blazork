@@ -23,15 +23,15 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
     public static class VarOps
     {
-        internal static void Call(Machine machine, OperandCollection operands)
+        public static void Call(Machine machine, OperandCollection operands)
         {
             var callAddress = machine.Memory.Unpack(operands[0].Value);
-            
-            
-            machine.SetPC(callAddress);
+            var method = new MethodDescriptor(callAddress, machine);
+
+            machine.SetPC((ushort)(callAddress + method.HeaderSize));
         }
 
-        internal static void StoreW(Machine machine, OperandCollection operands)
+        public static void StoreW(Machine machine, OperandCollection operands)
         {
 
         }

@@ -21,6 +21,7 @@ namespace ZMacBlazor.Client.ZMachine
             PC = newValue;
         }
 
+        public byte Version => Memory.Version;
         public ushort PC { get; protected set; }
         public MachineMemory Memory { get; protected set; }
 
