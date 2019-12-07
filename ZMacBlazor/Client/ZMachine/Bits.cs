@@ -26,12 +26,12 @@ namespace ZMacBlazor.Client.ZMachine
             return (byte)(value & 0b0001_1111);
         }
 
-        public static ushort MakeWord(ReadOnlySpan<byte> bytes)
+        public static int MakeWord(ReadOnlySpan<byte> bytes)
         {
             var byte1 = bytes[0];
             var byte2 = bytes[1];
 
-            return (ushort)((byte1 << 8) | (byte2)); 
+            return ((byte1 << 8) | (byte2)); 
         }
 
         public static bool SixSevenSet(byte value)

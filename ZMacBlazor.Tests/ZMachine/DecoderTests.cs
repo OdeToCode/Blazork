@@ -32,7 +32,7 @@ namespace ZMacBlazor.Tests.ZMachine
 
             instruction.Execute(machine);
 
-            Assert.Equal(0x5472, machine.PC);
+            Assert.Equal(0x5479, machine.PC);
         }
     }
 }

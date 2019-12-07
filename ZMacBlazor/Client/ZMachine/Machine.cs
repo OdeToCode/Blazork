@@ -16,13 +16,13 @@ namespace ZMacBlazor.Client.ZMachine
                 
         }
 
-        public void SetPC(ushort newValue)
+        public void SetPC(int newValue)
         {
             PC = newValue;
         }
 
         public byte Version => Memory.Version;
-        public ushort PC { get; protected set; }
+        public int PC { get; protected set; }
         public MachineMemory Memory { get; protected set; }
 
     }

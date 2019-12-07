@@ -21,7 +21,7 @@ namespace ZMacBlazor.Client.ZMachine
             return contents[address];
         }
 
-        public ushort WordAt(int address)
+        public int WordAt(int address)
         {
             return Bits.MakeWord(SpanAt(address));
         }
@@ -35,31 +35,31 @@ namespace ZMacBlazor.Client.ZMachine
             return contents.AsSpan(address);
         }
 
-        internal ushort Unpack(ushort address, bool print = false)
+        internal int Unpack(int address, bool print = false)
         {
             switch(Version)
             {
                 case 0x01:
                 case 0x02:
                 case 0x03:
-                    return (ushort)(address * 2);
+                    return (address * 2);
 
                 case 0x04:
                 case 0x05:
-                    return (ushort)(address * 4);
+                    return (address * 4);
 
                 case 0x06:
                 case 0x07:
                     if(print)
                     {
-                        return (ushort)((address * 4) + (8 * StringOffset));
+                        return ((address * 4) + (8 * StringOffset));
                     }
                     else
                     {
-                        return (ushort)((address * 4) + (8 * RoutineOffset));
+                        return ((address * 4) + (8 * RoutineOffset));
                     }
                 case 0x08:
-                    return (ushort)(address * 8);
+                    return (address * 8);
                 default:
                     throw new InvalidOperationException($"Bad version number {Version:X}");
             }
@@ -67,13 +67,13 @@ namespace ZMacBlazor.Client.ZMachine
 
         public byte Version => contents[Header.VERSION];
     
-        public ushort HighMemory => Bits.MakeWord(SpanAt(Header.HIGHMEMORY));
+        public int HighMemory => Bits.MakeWord(SpanAt(Header.HIGHMEMORY));
 
-        public ushort RoutineOffset => Bits.MakeWord(SpanAt(Header.ROUTINESOFFSET));
+        public int RoutineOffset => Bits.MakeWord(SpanAt(Header.ROUTINESOFFSET));
 
-        public ushort StringOffset => Bits.MakeWord(SpanAt(Header.STATICSTRINGSOFFSET));
+        public int StringOffset => Bits.MakeWord(SpanAt(Header.STATICSTRINGSOFFSET));
 
-        public ushort StartingProgramCounter 
+        public int StartingProgramCounter 
         {
             get
             {
@@ -88,9 +88,9 @@ namespace ZMacBlazor.Client.ZMachine
             }
         }
 
-        public ushort Dictionary => Bits.MakeWord(SpanAt(Header.DICTIONARY));
+        public int Dictionary => Bits.MakeWord(SpanAt(Header.DICTIONARY));
 
-        public ushort ObjectTable => Bits.MakeWord(SpanAt(Header.OBJECTTABLE));
+        public int ObjectTable => Bits.MakeWord(SpanAt(Header.OBJECTTABLE));
 
         public int FileLength
         {

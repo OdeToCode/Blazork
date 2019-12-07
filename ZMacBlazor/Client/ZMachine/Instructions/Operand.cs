@@ -2,13 +2,13 @@
 {
     public class Operand
     {
-        public Operand(byte type, ushort value)
+        public Operand(byte type, int value)
         {
             Value = value;
             OperandType = type;
         }
 
-        public ushort Value { get; protected set; }
+        public int Value { get; protected set; }
         public byte OperandType { get; protected set; }
     }
 }

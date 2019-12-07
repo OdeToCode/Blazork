@@ -28,7 +28,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var callAddress = machine.Memory.Unpack(operands[0].Value);
             var method = new MethodDescriptor(callAddress, machine);
 
-            machine.SetPC((ushort)(callAddress + method.HeaderSize));
+            machine.SetPC(callAddress + method.HeaderSize);
         }
 
         public static void StoreW(Machine machine, OperandCollection operands)
