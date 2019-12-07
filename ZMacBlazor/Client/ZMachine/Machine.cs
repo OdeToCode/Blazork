@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Microsoft.Extensions.Logging;
+using System.IO;
 
 namespace ZMacBlazor.Client.ZMachine
 {
@@ -6,9 +7,7 @@ namespace ZMacBlazor.Client.ZMachine
     {
         public void Load(Stream memoryBytes)
         {
-            Memory = new MachineMemory();
-            Memory.Load(memoryBytes);
-
+            Memory = new MachineMemory(memoryBytes);
             PC = Memory.StartingProgramCounter;
         }
 
@@ -17,7 +16,13 @@ namespace ZMacBlazor.Client.ZMachine
                 
         }
 
+        public void SetPC(ushort newValue)
+        {
+            PC = newValue;
+        }
+
         public ushort PC { get; protected set; }
-        public MachineMemory Memory { get; protected set; }  
+        public MachineMemory Memory { get; protected set; }
+
     }
 }

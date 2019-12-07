@@ -23,12 +23,15 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
     public static class VarOps
     {
-        public static void Call(Machine machine, OperandCollection operands)
+        internal static void Call(Machine machine, OperandCollection operands)
         {
-
+            var callAddress = machine.Memory.Unpack(operands[0].Value);
+            
+            
+            machine.SetPC(callAddress);
         }
 
-        public static void StoreW(Machine machine, OperandCollection operands)
+        internal static void StoreW(Machine machine, OperandCollection operands)
         {
 
         }
@@ -136,21 +139,20 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
         private Instruction DecodeVar(ReadOnlySpan<byte> bytes)
         {
-            var opcode = Bits.BottomFive(bytes[0]);
-
             if (Bits.FiveSet(bytes[0]))
             {
                 return CreateVarInstruction(bytes);
             }
             else
             {
+                var opcode = Bits.BottomFive(bytes[0]);
                 return CreateOp2Instruction(opcode);
             }
         }
 
         private Instruction CreateVarInstruction(ReadOnlySpan<byte> bytes)
         {
-            var opcode = bytes[0];
+            var opcode = Bits.BottomFive(bytes[0]);
             var operands = varOperandResolver.DecodeOperands(bytes.Slice(1));
 
             Operation operation =  opcode switch

@@ -6,7 +6,7 @@ namespace ZMacBlazor.Client.ZMachine
 {
     public class MachineMemory
     {
-        public void Load(Stream bytes)
+        public MachineMemory(Stream bytes)
         {
             if (bytes == null) throw new ArgumentNullException(nameof(bytes));
 
@@ -36,9 +36,43 @@ namespace ZMacBlazor.Client.ZMachine
             return contents.AsSpan(address);
         }
 
+        internal ushort Unpack(ushort address, bool print = false)
+        {
+            switch(Version)
+            {
+                case 0x01:
+                case 0x02:
+                case 0x03:
+                    return (ushort)(address * 2);
+
+                case 0x04:
+                case 0x05:
+                    return (ushort)(address * 4);
+
+                case 0x06:
+                case 0x07:
+                    if(print)
+                    {
+                        return (ushort)((address * 4) + (8 * StringOffset));
+                    }
+                    else
+                    {
+                        return (ushort)((address * 4) + (8 * RoutineOffset));
+                    }
+                case 0x08:
+                    return (ushort)(address * 8);
+                default:
+                    throw new InvalidOperationException($"Bad version number {Version:X}");
+            }
+        }
+
         public byte Version => contents[Header.VERSION];
     
-        public ushort HighMemory => ByteAddress.ToShort(contents, Header.HIGHMEMORY);
+        public ushort HighMemory => ByteAddress.ToWord(contents, Header.HIGHMEMORY);
+
+        public ushort RoutineOffset => ByteAddress.ToWord(contents, Header.ROUTINESOFFSET);
+
+        public ushort StringOffset => ByteAddress.ToWord(contents, Header.STATICSTRINGSOFFSET);
 
         public ushort StartingProgramCounter 
         {
@@ -46,7 +80,7 @@ namespace ZMacBlazor.Client.ZMachine
             {
                 if(Version < 6)
                 {
-                    return ByteAddress.ToShort(contents, Header.PC);
+                    return ByteAddress.ToWord(contents, Header.PC);
                 }
                 else
                 {
@@ -55,15 +89,15 @@ namespace ZMacBlazor.Client.ZMachine
             }
         }
 
-        public ushort Dictionary => ByteAddress.ToShort(contents, Header.DICTIONARY);
+        public ushort Dictionary => ByteAddress.ToWord(contents, Header.DICTIONARY);
 
-        public ushort ObjectTable => ByteAddress.ToShort(contents, Header.OBJECTTABLE);
+        public ushort ObjectTable => ByteAddress.ToWord(contents, Header.OBJECTTABLE);
 
         public int FileLength
         {
             get 
             {
-                var value = ByteAddress.ToShort(contents, Header.FILELENGTH);
+                var value = ByteAddress.ToWord(contents, Header.FILELENGTH);
                 if(Version <= 3)
                 {
                     return value * 2;

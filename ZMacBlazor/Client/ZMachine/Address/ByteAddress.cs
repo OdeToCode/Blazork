@@ -4,7 +4,7 @@ namespace ZMacBlazor.Client.ZMachine.Address
 {
     public static class ByteAddress
     {
-        public static ushort ToShort(byte[] bytes, int offset)
+        public static ushort ToWord(ReadOnlySpan<byte> bytes, int offset)
         {
             if(bytes == null) { throw new ArgumentNullException(nameof(bytes)); }
 
