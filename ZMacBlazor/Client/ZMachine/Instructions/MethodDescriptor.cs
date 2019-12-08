@@ -5,12 +5,11 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 {
     public class MethodDescriptor
     {
-        public MethodDescriptor(int address, Machine machine)
+        public MethodDescriptor(MemoryLocation memory, Machine machine)
         {
             if(machine == null) { throw new ArgumentNullException(nameof(machine)); }
 
-            var bytes = machine.Memory.SpanAt(address);
-            LocalsCount = bytes[0];
+            LocalsCount = memory.Bytes[0];
 
             if(LocalsCount < 0 || LocalsCount > 15)
             {
@@ -23,12 +22,12 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 for (var i = 0; i < LocalsCount; i++)
                 {
                     var offset = 1 + (i * 2);
-                    values[i] = Bits.MakeWord(bytes.Slice(offset, 2));
+                    values[i] = Bits.MakeWord(memory.Bytes.Slice(offset, 2));
                 }
                 InitialValues = values;
                 HeaderSize = (1 + (LocalsCount * 2));
             }
-            StartAddress = address + HeaderSize;
+            StartAddress = memory.Address + HeaderSize;
         }
 
         public int LocalsCount { get; }

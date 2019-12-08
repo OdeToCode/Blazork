@@ -5,6 +5,11 @@ namespace ZMacBlazor.Client.ZMachine
 {
     public class Machine
     {
+        public Machine()
+        {
+            Memory = new MachineMemory(Stream.Null);
+        }
+
         public void Load(Stream memoryBytes)
         {
             Memory = new MachineMemory(memoryBytes);

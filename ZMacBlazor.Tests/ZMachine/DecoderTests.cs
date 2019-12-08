@@ -24,14 +24,14 @@ namespace ZMacBlazor.Tests.ZMachine
             var machine = new Machine();
             machine.Load(file);
             
-            var decoder = new InstructionDecoder(testLogger);
-            var instruction = decoder.Decode(machine.Memory.SpanAt(machine.PC));
+            var decoder = new InstructionDecoder(machine);
+            var memory = machine.Memory.LocationAt(machine.PC);
+            var instruction = decoder.Decode(memory) as VarInstruction;
+            instruction.Execute(memory);
 
-            Assert.Equal(VarOps.Call, instruction.Operation);
-            Assert.Equal(3, instruction.Operands.Count);
-
-            instruction.Execute(machine);
-
+            Assert.NotNull(instruction);
+            Assert.Equal(0, instruction.OpCode);
+            Assert.Equal(3, instruction.Operands.Count);            
             Assert.Equal(0x5479, machine.PC);
         }
     }

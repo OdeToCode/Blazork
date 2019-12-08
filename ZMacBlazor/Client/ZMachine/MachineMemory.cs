@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using ZMacBlazor.Client.ZMachine.Instructions;
 
 namespace ZMacBlazor.Client.ZMachine
 {
@@ -26,6 +27,12 @@ namespace ZMacBlazor.Client.ZMachine
             return Bits.MakeWord(SpanAt(address));
         }
 
+        public MemoryLocation LocationAt(int address, int length = 0)
+        {
+            var location = new MemoryLocation(address, SpanAt(address, length));
+            return location;
+        }
+
         public ReadOnlySpan<byte> SpanAt(int address, int length = 0)
         {
             if (length != 0)
@@ -35,7 +42,7 @@ namespace ZMacBlazor.Client.ZMachine
             return contents.AsSpan(address);
         }
 
-        internal int Unpack(int address, bool print = false)
+        public int Unpack(int address, bool print = false)
         {
             switch(Version)
             {

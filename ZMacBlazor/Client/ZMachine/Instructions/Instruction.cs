@@ -1,17 +1,66 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 
 namespace ZMacBlazor.Client.ZMachine.Instructions
 {
-    public class Instruction
+    public abstract class Instruction
     {
-        public OperandCollection Operands { get; set;  }
-        public Operation Operation { get; set; }
-
-        public virtual void Execute(Machine machine)
+        public Instruction(Machine machine)
         {
-            Operation(machine, this);
+            Machine = machine;
+            Operation = a => throw new InvalidOperationException("Operation not set");
+            Operands = OperandCollection.Empty;
         }
+
+        public abstract void Execute(MemoryLocation memory);
+
+        public byte OpCode { get; protected set; }
+        public Machine Machine { get; }
+        public Operation Operation { get; protected set; }
+        public OperandCollection Operands { get; protected set; }
+    }
+
+    public class VarInstruction : Instruction
+    {
+        public VarInstruction(Machine machine) : base(machine)
+        {
+            varOperandResolver = new VarOperandResolver();
+        }
+
+        public override void Execute(MemoryLocation memory)
+        {
+            OpCode = Bits.BottomFive(memory.Bytes[0]);
+            Operands = varOperandResolver.DecodeOperands(memory.Bytes.Slice(1));
+            Operation = OpCode switch
+            {
+                0x00 => Call,
+                0x01 => StoreW,
+                _ => throw new InvalidOperationException($"Unknown VAR opcode {OpCode:X}")
+            };
+            
+            Operation(memory);
+        }
+
+        public void Call(MemoryLocation memory)
+        {
+            var callAddress = Machine.Memory.Unpack(Operands[0].Value);
+            //var method = new MethodDescriptor(callAddress, machine);
+            
+            //var storeLocation = 
+
+            //erk!
+            //var returnLocation = machine.PC +
+            //                    (instruction.Operands.Count * 2) +
+            //                    1 + // method header
+            //                    1;  // store result
+
+        }
+
+        public void StoreW(MemoryLocation memory)
+        {
+            throw new NotImplementedException();
+        }
+
+        VarOperandResolver varOperandResolver;
     }
 
 #pragma warning disable CA1062 // Validate arguments of public methods
@@ -20,7 +69,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         public static void Call(Machine machine, Instruction instruction)
         {
             var callAddress = machine.Memory.Unpack(instruction.Operands[0].Value);
-            var method = new MethodDescriptor(callAddress, machine);
+            var memory = machine.Memory.LocationAt(callAddress);
+            var method = new MethodDescriptor(memory, machine);
             //var storeLocation = 
 
             //erk!
@@ -88,41 +138,51 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
     // $c0 -- $df  variable  2OP(operand types in next byte)
     // $e0 -- $ff  variable  VAR(operand types in next byte(s))
 
-    public class InstructionDecoder
+    public readonly ref struct MemoryLocation
     {
-        private readonly ILogger logger;
-        private VarOperandResolver varOperandResolver = new VarOperandResolver();
-
-        public InstructionDecoder(ILogger logger)
+        public MemoryLocation(int address, ReadOnlySpan<byte> bytes)
         {
-            this.logger = logger;
+            Address = address;
+            Bytes = bytes;
         }
 
-        public Instruction Decode(ReadOnlySpan<byte> bytes)
+        public int Address { get; }
+        public ReadOnlySpan<byte> Bytes { get; }
+    }
+
+    public class InstructionDecoder
+    {
+        private readonly Machine machine;
+
+        public InstructionDecoder(Machine machine)
         {
-            var instruction = bytes[0] switch
+            this.machine = machine;
+        }
+
+        public Instruction Decode(MemoryLocation memory)
+        {
+            var instruction = memory.Bytes[0] switch
             {
-                0xBE => DecodeExt(bytes),
-                var v when Bits.SixSevenSet(v) => DecodeVar(bytes),
-                var v when Bits.SevenSet(v) => DecodeShort(bytes),
-                _ => DecodeLong(bytes)
+                0xBE => DecodeExt(memory),
+                var v when Bits.SixSevenSet(v) => DecodeVar(memory),
+                var v when Bits.SevenSet(v) => DecodeShort(memory),
+                _ => DecodeLong(memory)
             };
 
-            logger.LogInformation($"Decoded {instruction.GetType()}");
             return instruction;
         }
 
-        private Instruction DecodeExt(ReadOnlySpan<byte> bytes)
+        private Instruction DecodeExt(MemoryLocation memory)
         {
-            var opcode = bytes[1];
+            var opcode = memory.Bytes[1];
             return CreateExtInstruction(opcode);
         }
 
-        private Instruction DecodeShort(ReadOnlySpan<byte> bytes)
+        private Instruction DecodeShort(MemoryLocation memory)
         {
-            var opcode = Bits.BottomFour(bytes[0]);
+            var opcode = Bits.BottomFour(memory.Bytes[0]);
 
-            if (Bits.FourFiveSet(bytes[0]))
+            if (Bits.FourFiveSet(memory.Bytes[0]))
             {
                 return CreateOp0Instruction(opcode);
             }
@@ -132,42 +192,24 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             }
         }
 
-        private Instruction DecodeLong(ReadOnlySpan<byte> bytes)
+        private Instruction DecodeLong(MemoryLocation memory)
         {
-            var opcode = Bits.BottomFive(bytes[0]);
+            var opcode = Bits.BottomFive(memory.Bytes[0]);
 
             return CreateOp2Instruction(opcode);
         }
 
-        private Instruction DecodeVar(ReadOnlySpan<byte> bytes)
+        private Instruction DecodeVar(MemoryLocation memory)
         {
-            if (Bits.FiveSet(bytes[0]))
+            if (Bits.FiveSet(memory.Bytes[0]))
             {
-                return CreateVarInstruction(bytes);
+                return new VarInstruction(machine);
             }
             else
             {
-                var opcode = Bits.BottomFive(bytes[0]);
+                var opcode = Bits.BottomFive(memory.Bytes[0]);
                 return CreateOp2Instruction(opcode);
             }
-        }
-
-        private Instruction CreateVarInstruction(ReadOnlySpan<byte> bytes)
-        {
-            var opcode = Bits.BottomFive(bytes[0]);
-            var operands = varOperandResolver.DecodeOperands(bytes.Slice(1));
-
-            Operation operation =  opcode switch
-            {
-                0x00 => VarOps.Call,
-                0x01 => VarOps.StoreW,
-                _ => throw new InvalidOperationException($"Unknown VAR opcode {opcode:X}")
-            };
-
-            var instruction = new Instruction();
-            instruction.Operands = operands;
-            instruction.Operation = operation;
-            return instruction;
         }
 
         private Instruction CreateOp1Instruction(byte opcode)
