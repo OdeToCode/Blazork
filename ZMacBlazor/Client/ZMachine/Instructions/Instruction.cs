@@ -5,37 +5,39 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 {
     public class Instruction
     {
-        public Instruction(Operation operation,
-                           OperandCollection operands)
-        {
-            Operands = operands;
-            Operation = operation;
-        }
-
-        public OperandCollection Operands { get; }
-        public Operation Operation { get; }
+        public OperandCollection Operands { get; set;  }
+        public Operation Operation { get; set; }
 
         public virtual void Execute(Machine machine)
         {
-            Operation(machine, Operands);
+            Operation(machine, this);
         }
     }
 
+#pragma warning disable CA1062 // Validate arguments of public methods
     public static class VarOps
     {
-        public static void Call(Machine machine, OperandCollection operands)
+        public static void Call(Machine machine, Instruction instruction)
         {
-            var callAddress = machine.Memory.Unpack(operands[0].Value);
+            var callAddress = machine.Memory.Unpack(instruction.Operands[0].Value);
             var method = new MethodDescriptor(callAddress, machine);
+            //var storeLocation = 
 
-            machine.SetPC(callAddress + method.HeaderSize);
+            //erk!
+            //var returnLocation = machine.PC +
+            //                    (instruction.Operands.Count * 2) +
+            //                    1 + // method header
+            //                    1;  // store result
+
+            //machine.SetPC(callAddress + method.HeaderSize);
         }
 
-        public static void StoreW(Machine machine, OperandCollection operands)
+        public static void StoreW(Machine machine, Instruction instruction)
         {
 
         }
     }
+#pragma warning restore CA1062 // Validate arguments of public methods
 
     // How Instructions are Encoded
 
@@ -162,7 +164,9 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 _ => throw new InvalidOperationException($"Unknown VAR opcode {opcode:X}")
             };
 
-            var instruction = new Instruction(operation, operands);
+            var instruction = new Instruction();
+            instruction.Operands = operands;
+            instruction.Operation = operation;
             return instruction;
         }
 
