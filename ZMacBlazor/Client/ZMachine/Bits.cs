@@ -4,6 +4,14 @@ namespace ZMacBlazor.Client.ZMachine
 {
     public static class Bits
     {
+        public static (byte, byte) BreakWord(int value)
+        {
+            var b1 = (byte)((value & 0b11111111_00000000) >> 8);
+            var b2 = (byte)(value & 0b00000000_11111111);
+
+            return (b1, b2);
+        }
+
         public static byte[] BreakIntoTwos(byte value)
         {
             var result = new byte[4];
@@ -55,6 +63,12 @@ namespace ZMacBlazor.Client.ZMachine
         public static bool FiveSet(byte value)
         {
             var mask = (byte)0b0010_0000;
+            return (value & mask) == mask;
+        }
+
+        public static bool SixSet(byte value)
+        {
+            var mask = (byte)0b0100_0000;
             return (value & mask) == mask;
         }
     }

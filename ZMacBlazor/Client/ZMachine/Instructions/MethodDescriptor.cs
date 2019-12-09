@@ -27,13 +27,18 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 InitialValues = values;
                 HeaderSize = (1 + (LocalsCount * 2));
             }
+            else
+            {
+                HeaderSize = 1;
+                InitialValues = Empty;
+            }
             StartAddress = memory.Address + HeaderSize;
         }
 
         public int LocalsCount { get; }
         public int StartAddress { get; }
-        public ICollection<int> InitialValues { get; } = Empty;
-        public int HeaderSize { get; set; } = 1;
+        public ICollection<int> InitialValues { get; }
+        public int HeaderSize { get; set; }
         readonly static ICollection<int> Empty = new List<int>();
     }
 }

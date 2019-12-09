@@ -33,7 +33,7 @@ namespace ZMacBlazor.Client.ZMachine
             return location;
         }
 
-        public ReadOnlySpan<byte> SpanAt(int address, int length = 0)
+        public Span<byte> SpanAt(int address, int length = 0)
         {
             if (length != 0)
             {
@@ -94,6 +94,8 @@ namespace ZMacBlazor.Client.ZMachine
                 }
             }
         }
+
+        public Span<byte> Globals => SpanAt(Header.GLOBALS);
 
         public int Dictionary => Bits.MakeWord(SpanAt(Header.DICTIONARY));
 

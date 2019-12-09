@@ -11,7 +11,6 @@ namespace ZMacBlazor.Client.ZMachine
             ReturnPC = returnPC;
             RoutineStack = new Stack<int>();
             StoreResult = storeResult;
-
         }
 
         int[] locals;

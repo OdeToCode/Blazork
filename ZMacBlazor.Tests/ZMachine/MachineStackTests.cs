@@ -11,7 +11,7 @@ namespace ZMacBlazor.Tests.ZMachine
         [Fact]
         public void CanPushAndPop()
         {
-            var s = new StackCollection();
+            var s = new FrameCollection();
             s.PushFrame(new StackFrame(0x55FF, 2, 1));
             s.Locals[0] = 22;
             s.RoutineStack.Push(42);

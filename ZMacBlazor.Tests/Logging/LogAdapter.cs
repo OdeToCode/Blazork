@@ -4,11 +4,11 @@ using Xunit.Abstractions;
 
 namespace ZMacBlazor.Tests.Logging
 {
-    public class LoggerAdapter : ILogger
+    public class LogAdapter : ILogger
     {
         private readonly ITestOutputHelper testOutput;
 
-        public LoggerAdapter(ITestOutputHelper testOutput)
+        public LogAdapter(ITestOutputHelper testOutput)
         {
             this.testOutput = testOutput;
         }

@@ -10,9 +10,9 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
     // * - operand type
     // 1,2,3,4 - operands
     //
-    // Long 2OP
-    // f**ooooo 11111111 22222222
-    // 0xxxxxxx xxxxxxxx xxxxxxxx
+    // Long 2OP 
+    // f**ooooo 11111111 22222222 
+    // 0xxxxxxx xxxxxxxx xxxxxxxx 
     //
     // * - 0 small constant 1 is variable
     //
@@ -96,7 +96,6 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         private Instruction DecodeLong(MemoryLocation memory)
         {
             var opcode = Bits.BottomFive(memory.Bytes[0]);
-
             return CreateOp2Instruction(opcode);
         }
 
@@ -108,8 +107,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             }
             else
             {
-                var opcode = Bits.BottomFive(memory.Bytes[0]);
-                return CreateOp2Instruction(opcode);
+                return new Op2Instruction(machine);
             }
         }
 
@@ -139,10 +137,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
         private Instruction CreateOp2Instruction(byte opcode)
         {
-            return opcode switch
-            {
-                _ => throw new InvalidOperationException($"Unknown OP2 opcode {opcode:X}")
-            };
+            return new Op2Instruction(machine);
         }
     }
 }

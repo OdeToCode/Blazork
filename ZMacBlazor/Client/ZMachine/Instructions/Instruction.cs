@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 
 namespace ZMacBlazor.Client.ZMachine.Instructions
 {
@@ -7,15 +8,31 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         public Instruction(Machine machine)
         {
             Machine = machine;
-            Operation = a => throw new InvalidOperationException("Operation not set");
-            Operands = OperandCollection.Empty;
+            Operands = new OperandCollection(machine);
+            Operation = EmptyOperation;
+            Store = int.MinValue;
+            Branch = int.MinValue;
+        }
+
+        public void DumpToLog(MemoryLocation memory)
+        {
+            Machine.Logger.Log(LogLevel.Trace, $"{ToString()} Raw: {memory.ToString()}");
+        }
+
+        public override string ToString()
+        {
+            return $"Instruction: {GetType().Name} {Operation.Name} {Operands.ToString()}";
         }
 
         public abstract void Execute(MemoryLocation memory);
 
-        public byte OpCode { get; protected set; }
+        public OperandCollection Operands { get; }
         public Machine Machine { get; }
         public Operation Operation { get; protected set; }
-        public OperandCollection Operands { get; protected set; }
+        public byte OpCode { get; protected set; }
+        public int Store { get; set; }
+        public int Branch { get; set; }
+
+        public readonly static Operation EmptyOperation = new Operation("Invalid", l => { });
     }
 }

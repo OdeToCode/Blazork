@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ZMacBlazor.Client.ZMachine
 {
-    public class StackCollection 
+    public class FrameCollection 
     {
         public StackFrame PopFrame()
         {
