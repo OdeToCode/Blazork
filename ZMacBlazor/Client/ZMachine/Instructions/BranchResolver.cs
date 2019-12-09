@@ -35,18 +35,4 @@
             return new Branch(branchOnTrue, offset, oneByteOffset ? 1 : 2);
         }
     }
-
-    public class Branch
-    {
-        public Branch(bool branchOnTrue, int offset, int size)
-        {
-            Offset = offset;
-            Size = size;
-            BranchOnTrue = branchOnTrue;
-        }
-
-        public int Offset { get; }
-        public bool BranchOnTrue { get; }
-        public int Size { get; }
-    }
 }

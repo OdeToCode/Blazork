@@ -21,12 +21,26 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Operation = OpCode switch
             {
                 0x01 => new Operation(nameof(JE), JE),
+                0x0F => new Operation(nameof(LoadW), LoadW),
                 0x14 => new Operation(nameof(Add), Add),
                 _ => throw new InvalidOperationException($"Unknown OP2 opcode {OpCode:X}")
             };
 
-            DumpToLog(memory);
             Operation.Method(memory);
+        }
+
+        public void LoadW(MemoryLocation location)
+        {
+            var baseArray = Operands[0].Value;
+            var index = Operands[1].Value;
+            var arrayLocation = baseArray + 2 * index;
+            var word = Machine.Memory.WordAt(arrayLocation);
+
+            Store = location.Bytes[Operands.Size + 1];
+            Machine.SetWordVariable(Store, word);
+
+            DumpToLog(location);
+            Machine.SetPC(location.Address + Operands.Size + 2);
         }
 
         public void Add(MemoryLocation memory)
@@ -35,11 +49,13 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var b = Operands[1].Value;
             var result = a + b;
 
-            Store = memory.Bytes[3];
+            Store = memory.Bytes[Operands.Size + 1];
             Machine.SetWordVariable(Store, result);
-            Machine.SetPC(memory.Address + 4);
-        }
 
+            DumpToLog(memory);
+            Machine.SetPC(memory.Address + Operands.Size + 2);
+        }
+        
         public void JE(MemoryLocation location)
         {
             var a = Operands[0].Value;
@@ -49,20 +65,25 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var branchData = Machine.Memory.LocationAt(location.Address + Operands.Size + 1);
             Branch = branchResolver.ResolveBranch(branchData);
 
-            if(Branch.Offset == 0)
+            var size = 1 + Operands.Size + Branch.Size;
+            if (Branch.Offset == 0 && Branch.BranchOnTrue == result)
             {
                 throw new InvalidOperationException("Means to return false from current routine");
             }
-            else if(Branch.Offset == 1)
+            else if(Branch.Offset == 1 && Branch.BranchOnTrue == result)
             {
                 throw new InvalidOperationException("measure to return true from current routine");
             }
-            else
-            {
-                var size = 1 + Operands.Size + Branch.Size;
+            else if(Branch.BranchOnTrue == result)
+            {    
                 var newPC = location.Address + size + Branch.Offset - 2;
                 Machine.SetPC(newPC);
             }
+            else
+            {
+                Machine.SetPC(location.Address + size);
+            }
+            DumpToLog(location);
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
+using System.Text;
 
 namespace ZMacBlazor.Client.ZMachine.Instructions
 {
@@ -10,16 +12,32 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Operands = new OperandCollection(machine);
             Operation = EmptyOperation;
             Store = int.MinValue;
+            Branch = Branch.NullBranch;
         }
 
         public void DumpToLog(MemoryLocation memory)
         {
-            Machine.Logger.Log(LogLevel.Trace, $"{ToString()} Raw: {memory.ToString()}");
+            var sb = new StringBuilder();
+            sb.Append($"{ToString()}");
+            sb.Append($"\t Raw: @{memory.Address:X} {memory.ToString()}");
+
+            Machine.Logger.Log(LogLevel.Trace, sb.ToString());
         }
 
         public override string ToString()
         {
-            return $"Instruction: {GetType().Name} {Operation.Name} {Operands.ToString()}";
+            var sb = new StringBuilder();
+            sb.AppendLine($"OP: {Operation.Name}");
+            sb.AppendLine($"\t{Operands.ToString()}");
+            if(Store >= 0)
+            {
+                sb.AppendLine($"\tStore:{Store}");
+            }
+            if(Branch != Branch.NullBranch)
+            {
+                sb.AppendLine($"\tBranch: { Branch.ToString()}");
+            }
+            return sb.ToString();
         }
 
         public abstract void Execute(MemoryLocation memory);
