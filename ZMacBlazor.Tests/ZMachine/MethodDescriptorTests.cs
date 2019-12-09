@@ -1,26 +1,20 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using Xunit;
-using Xunit.Abstractions;
 using ZMacBlazor.Client.ZMachine;
 using ZMacBlazor.Client.ZMachine.Instructions;
 using ZMacBlazor.Tests.Logging;
 
 namespace ZMacBlazor.Tests.ZMachine
 {
-    public class MethodDescriptorTests
+    public class MethodDescriptorTests 
     {
-        private LogAdapter logger;
-
-        public MethodDescriptorTests(ITestOutputHelper testOutput)
-        {
-            logger = new LogAdapter(testOutput);
-        }
-
         [Fact]
         public void Decodes_Method_At_5472()
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
+            using var logger = new NullLogger();
             var machine = new Machine(logger);
             machine.Load(file);
 

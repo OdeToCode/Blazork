@@ -24,6 +24,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             OpCode = Bits.BottomFour(memory.Bytes[0]);
             Operation = OpCode switch
             {
+                0x0B => new Operation(nameof(Ret), Ret),
                 0x0C => new Operation(nameof(Jump), Jump),
                 _ => throw new InvalidOperationException($"Unknown OP1 opcode {OpCode:X}")
             };
@@ -41,6 +42,15 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void Ret(MemoryLocation location)
+        {
+            var returnValue = Operands[0].Value;
+            var frame = Machine.StackFrames.PopFrame();
+
+            Machine.SetWordVariable(frame.StoreVariable, returnValue);
+            Machine.SetPC(frame.ReturnPC);
         }
 
         public void Jump(MemoryLocation location)

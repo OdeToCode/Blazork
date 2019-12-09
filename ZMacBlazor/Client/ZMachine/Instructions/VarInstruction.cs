@@ -18,6 +18,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Operation = OpCode switch
             {
                 0x00 => new Operation(nameof(Call), Call, hasStore: true),
+                0x01 => new Operation(nameof(StoreW), StoreW),
                 _ => throw new InvalidOperationException($"Unknown VAR opcode {OpCode:X}")
             };
             if (Operation.HasBranch)
@@ -30,9 +31,23 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 Store = memory.Bytes[Size];
                 Size += 1;
             }
-            
+
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void StoreW(MemoryLocation location)
+        {
+            var baseArray = Operands[0].Value;
+            var index = Operands[1].Value;
+            var arrayLocation = baseArray + (2 * index);
+            
+            var entry = Machine.Memory.LocationAt(arrayLocation, 2);
+            var value = Operands[2].Value;
+            
+
+            DumpToLog(location);
+            Machine.SetPC(location.Address + Size);
         }
 
         public void Call(MemoryLocation memory)

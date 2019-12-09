@@ -1,23 +1,17 @@
-﻿using Xunit;
-using Xunit.Abstractions;
+﻿using System;
+using Xunit;
 using ZMacBlazor.Client.ZMachine;
 using ZMacBlazor.Client.ZMachine.Instructions;
 using ZMacBlazor.Tests.Logging;
 
 namespace ZMacBlazor.Tests.ZMachine
 {
-    public class OperandTests
+    public class OperandTests 
     {
-        private readonly LogAdapter logger;
-
-        public OperandTests(ITestOutputHelper outputHelper)
-        {
-            logger = new LogAdapter(outputHelper);
-        }
-
         [Fact]
         public void CanReturnValue()
         {
+            using var logger = new NullLogger();
             var machine = new Machine(logger);
             var operand = new Operand(OperandType.Large, 0xFFFF, machine);
 
@@ -27,7 +21,9 @@ namespace ZMacBlazor.Tests.ZMachine
         [Fact]
         public void CanReturnSignedValue()
         {
+            using var logger = new NullLogger();
             var machine = new Machine(logger);
+
             var operand1 = new Operand(OperandType.Large, 0xFFFF, machine);
             var operand2 = new Operand(OperandType.Large, 0xFFFE, machine);
             var operand3 = new Operand(OperandType.Large, 0xFFD7, machine);

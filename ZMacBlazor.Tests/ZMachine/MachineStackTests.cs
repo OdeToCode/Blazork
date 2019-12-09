@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
+﻿using Xunit;
 using ZMacBlazor.Client.ZMachine;
+using ZMacBlazor.Tests.Logging;
 
 namespace ZMacBlazor.Tests.ZMachine
 {
@@ -11,7 +9,8 @@ namespace ZMacBlazor.Tests.ZMachine
         [Fact]
         public void CanPushAndPop()
         {
-            var s = new FrameCollection();
+            var m = new Machine(new NullLogger());
+            var s = new FrameCollection(m);
             s.PushFrame(new StackFrame(0x55FF, 2, 1));
             s.Locals[0] = 22;
             s.RoutineStack.Push(42);

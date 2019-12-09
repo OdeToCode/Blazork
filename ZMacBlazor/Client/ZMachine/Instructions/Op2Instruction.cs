@@ -37,7 +37,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 Store = memory.Bytes[Size];
                 Size += 1;
             }
-            
+
             DumpToLog(memory);
             Operation.Execute(memory);
         }

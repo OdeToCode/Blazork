@@ -1,21 +1,28 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using Xunit.Abstractions;
+using System.IO;
 
 namespace ZMacBlazor.Tests.Logging
 {
-    public class LogAdapter : ILogger
+    public class TestLogger : ILogger, IDisposable
     {
-        private readonly ITestOutputHelper testOutput;
+        private StreamWriter log;
 
-        public LogAdapter(ITestOutputHelper testOutput)
+        public TestLogger(string name)
         {
-            this.testOutput = testOutput;
+            log = new StreamWriter(File.OpenWrite(name));
+            log.WriteLine();
+            log.WriteLine($"**** {DateTime.Now.ToLongTimeString()} ****");
         }
 
         public IDisposable BeginScope<TState>(TState state)
         {
             return null;
+        }
+
+        public void Dispose()
+        {
+            log.Close();
         }
 
         public bool IsEnabled(LogLevel logLevel)
@@ -25,7 +32,7 @@ namespace ZMacBlazor.Tests.Logging
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            testOutput.WriteLine(formatter(state, exception));
+            log.WriteLine(formatter(state, exception));
         }
     }
 }

@@ -27,6 +27,18 @@ namespace ZMacBlazor.Client.ZMachine
             return Bits.MakeWord(SpanAt(address));
         }
 
+        public void StoreByteAt(int address, byte value)
+        {
+            contents[address] = value;
+        }
+
+        public void StoreWordAt(int address, int value)
+        {
+            var (msb, lsb) = Bits.BreakWord(value);
+            contents[address] = msb;
+            contents[address + 1] = lsb;
+        }
+
         public MemoryLocation LocationAt(int address, int length = 0)
         {
             var location = new MemoryLocation(address, SpanAt(address, length));

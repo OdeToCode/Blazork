@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using System.IO;
+﻿using System.IO;
 using Xunit;
-using Xunit.Abstractions;
 using ZMacBlazor.Client.ZMachine;
 using ZMacBlazor.Client.ZMachine.Instructions;
 using ZMacBlazor.Tests.Logging;
@@ -10,18 +8,12 @@ namespace ZMacBlazor.Tests.ZMachine
 {
     public class DecoderTests
     {
-        private readonly ILogger testLogger;
-
-        public DecoderTests(ITestOutputHelper testOutput)
-        {
-            testLogger = new LogAdapter(testOutput);
-        }
-
         [Fact]
         public void RunZork()
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
-            var machine = new Machine(testLogger);
+            using var logger = new TestLogger($"{nameof(DecoderTests)}-{nameof(RunZork)}.log");
+            var machine = new Machine(logger);
             machine.Load(file);
             machine.Execute();
         }
@@ -30,7 +22,8 @@ namespace ZMacBlazor.Tests.ZMachine
         public void DecodesOpeningZorkInstruction()
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
-            var machine = new Machine(testLogger);
+            using var logger = new NullLogger();
+            var machine = new Machine(logger);
             machine.Load(file);
             
             var decoder = new InstructionDecoder(machine);

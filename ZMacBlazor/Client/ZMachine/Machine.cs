@@ -10,7 +10,7 @@ namespace ZMacBlazor.Client.ZMachine
         public Machine(ILogger logger)
         {
             Memory = new MachineMemory(Stream.Null);
-            StackFrames = new FrameCollection();
+            StackFrames = new FrameCollection(this);
             Logger = logger;
         }
 
@@ -23,6 +23,8 @@ namespace ZMacBlazor.Client.ZMachine
         public void Execute()
         {
             var decoder = new InstructionDecoder(this);
+            var startingStackFrame = new StackFrame(0, 0, -1);
+            StackFrames.PushFrame(startingStackFrame);
 
             var i = 500;
             while(--i > 0)
@@ -41,6 +43,7 @@ namespace ZMacBlazor.Client.ZMachine
             }
             else if (variableNumber <= 15)
             {
+                Logger.Log(LogLevel.Information, $"SetWordVariable varNum:{variableNumber} value:{value} localsCount:{StackFrames.Locals.Length}");
                 StackFrames.Locals[variableNumber - 1] = value;
             }
             else if (variableNumber <= 255)
@@ -88,7 +91,6 @@ namespace ZMacBlazor.Client.ZMachine
         public void SetPC(int newValue)
         {
             PC = newValue;
-            Logger.Log(LogLevel.Trace, $"Setting machine PC to {newValue:X}");
         }
 
         public byte Version => Memory.Version;
