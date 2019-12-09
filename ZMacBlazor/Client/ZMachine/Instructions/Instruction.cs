@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
 
 namespace ZMacBlazor.Client.ZMachine.Instructions
 {
@@ -11,7 +10,6 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Operands = new OperandCollection(machine);
             Operation = EmptyOperation;
             Store = int.MinValue;
-            Branch = int.MinValue;
         }
 
         public void DumpToLog(MemoryLocation memory)
@@ -29,10 +27,10 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         public OperandCollection Operands { get; }
         public Machine Machine { get; }
         public Operation Operation { get; protected set; }
+        public Branch Branch { get; set; }
         public byte OpCode { get; protected set; }
         public int Store { get; set; }
-        public int Branch { get; set; }
-
+        
         public readonly static Operation EmptyOperation = new Operation("Invalid", l => { });
     }
 }

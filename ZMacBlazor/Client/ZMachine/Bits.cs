@@ -34,12 +34,25 @@ namespace ZMacBlazor.Client.ZMachine
             return (byte)(value & 0b0001_1111);
         }
 
+        public static byte BottomSix(byte value)
+        {
+            return (byte)(value & 0b0011_1111);
+        }
+
+        public static int MakeWordFromBottomFourteen(ReadOnlySpan<byte> bytes)
+        {
+            var msb = Bits.BottomSix(bytes[0]);
+            var lsb = bytes[1];
+
+            return ((msb << 8) | (lsb));
+        }
+
         public static int MakeWord(ReadOnlySpan<byte> bytes)
         {
-            var byte1 = bytes[0];
-            var byte2 = bytes[1];
+            var msb = bytes[0];
+            var lsb = bytes[1];
 
-            return ((byte1 << 8) | (byte2)); 
+            return ((msb << 8) | (lsb)); 
         }
 
         public static bool SixSevenSet(byte value)

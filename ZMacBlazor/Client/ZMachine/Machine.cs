@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
+using ZMacBlazor.Client.ZMachine.Instructions;
 
 namespace ZMacBlazor.Client.ZMachine
 {
@@ -21,7 +22,15 @@ namespace ZMacBlazor.Client.ZMachine
 
         public void Execute()
         {
-                
+            var decoder = new InstructionDecoder(this);
+
+            var i = 100;
+            while(--i > 0)
+            {
+                var memory = Memory.LocationAt(PC);
+                var instruction = decoder.Decode(memory);
+                instruction.Execute(memory);
+            }
         }
 
         public void SetWordVariable(int variableNumber, int value)

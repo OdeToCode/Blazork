@@ -77,6 +77,31 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
         public int Count => innerList.Count;
         public bool IsReadOnly => false;
+
+        public int Size 
+        { 
+            get
+            {
+                var size = 0;
+                foreach(var operand in innerList)
+                {
+                    if(operand.Type == OperandType.Small)
+                    {
+                        size += 1;
+                    }
+                    else if(operand.Type == OperandType.Variable)
+                    {
+                        size += 1;
+                    }
+                    else if(operand.Type == OperandType.Large)
+                    {
+                        size += 2;
+                    }
+                }
+                return size;
+            }
+        }
+
         private readonly List<Operand> innerList;
         private readonly Machine machine;
     }

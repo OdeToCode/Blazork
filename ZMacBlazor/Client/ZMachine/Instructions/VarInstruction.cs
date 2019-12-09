@@ -31,17 +31,18 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var callAddress = Machine.Memory.Unpack(Operands[0].Value);
             var methodMemory = Machine.Memory.LocationAt(callAddress);
             var method = new MethodDescriptor(methodMemory, Machine);
-
-            var callInstructionSize = 4 + (Operands.Count * 2);
-            var store = memory.Bytes[callInstructionSize - 1];
+            var callInstructionSize = 4 + (Operands.Size);
+            
+            Store = memory.Bytes[callInstructionSize - 1];
             var newFrame = new StackFrame(memory.Address + callInstructionSize,
-                                          method.LocalsCount, store);
+                                          method.LocalsCount, Store);
+            Machine.StackFrames.PushFrame(newFrame);
+            
             for(var i = 1; i < Operands.Count; i++)
             {
-                
+                Machine.SetWordVariable(i, Operands[i].Value);
             }
             
-            Machine.StackFrames.PushFrame(newFrame);
             Machine.SetPC(callAddress + method.HeaderSize);
         }
 
