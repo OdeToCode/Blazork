@@ -25,7 +25,16 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             }
         }
 
+        public int SignedValue
+        {
+            get
+            {
+                return (short)Value; 
+            }
+        }
+
         public int RawValue { get; protected set; }
+        
         public byte Type { get; protected set; }
         private readonly Machine machine;
     }

@@ -1,4 +1,6 @@
-﻿namespace ZMacBlazor.Client.ZMachine.Instructions
+﻿using System;
+
+namespace ZMacBlazor.Client.ZMachine.Instructions
 {
     public class Branch
     {
@@ -7,6 +9,28 @@
             Offset = offset;
             Size = size;
             BranchOnTrue = branchOnTrue;
+        }
+
+        public void Go(bool result, Machine machine, int instructionSize, MemoryLocation location)
+        {
+            if (Offset == 0 && BranchOnTrue == result)
+            {
+                throw new InvalidOperationException("Means to return false from current routine");
+            }
+            else if (Offset == 1 && BranchOnTrue == result)
+            {
+                throw new InvalidOperationException("measure to return true from current routine");
+            }
+            else if (BranchOnTrue == result)
+            {
+                var newPC = location.Address + instructionSize + Offset - 2;
+                machine.SetPC(newPC);
+            }
+            else
+            {
+                machine.SetPC(location.Address + instructionSize);
+            }
+
         }
 
         public override string ToString()

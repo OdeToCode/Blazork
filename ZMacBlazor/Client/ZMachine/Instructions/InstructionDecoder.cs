@@ -89,14 +89,13 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             }
             else
             {
-                return CreateOp1Instruction(opcode);
+                return new Op1Instruction(machine);
             }
         }
 
         private Instruction DecodeLong(MemoryLocation memory)
         {
-            var opcode = Bits.BottomFive(memory.Bytes[0]);
-            return CreateOp2Instruction(opcode);
+            return new Op2Instruction(machine);
         }
 
         private Instruction DecodeVar(MemoryLocation memory)
@@ -109,14 +108,6 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             {
                 return new Op2Instruction(machine);
             }
-        }
-
-        private Instruction CreateOp1Instruction(byte opcode)
-        {
-            return opcode switch
-            {
-                _ => throw new InvalidOperationException($"Unknown OP1 opcode {opcode:X}")
-            };
         }
 
         private Instruction CreateOp0Instruction(byte opcode)
@@ -133,11 +124,6 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             {
                 _ => throw new InvalidOperationException($"Unknown EXT opcode {opcode:X}")
             };
-        }
-
-        private Instruction CreateOp2Instruction(byte opcode)
-        {
-            return new Op2Instruction(machine);
         }
     }
 }

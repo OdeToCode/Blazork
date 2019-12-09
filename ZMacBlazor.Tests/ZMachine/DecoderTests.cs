@@ -41,6 +41,7 @@ namespace ZMacBlazor.Tests.ZMachine
             Assert.NotNull(instruction as VarInstruction);
             Assert.Equal("Call", instruction.Operation.Name);
             Assert.Equal(0, instruction.OpCode);
+            Assert.Equal(0, instruction.Store);
             Assert.Equal(3, instruction.Operands.Count);
             Assert.Equal(0x5479, machine.PC);
 
@@ -51,6 +52,7 @@ namespace ZMacBlazor.Tests.ZMachine
             Assert.NotNull(instruction as VarInstruction);
             Assert.Equal("Call", instruction.Operation.Name);
             Assert.Equal(2, instruction.Operands.Count);
+            Assert.Equal(3, instruction.Store);
             Assert.Equal(OperandType.Variable, instruction.Operands[1].Type);
             Assert.Equal(1, instruction.Operands[1].RawValue);
 
@@ -60,6 +62,7 @@ namespace ZMacBlazor.Tests.ZMachine
 
             Assert.NotNull(instruction as Op2Instruction);
             Assert.Equal("Add", instruction.Operation.Name);
+            Assert.Equal(4, instruction.Size);
             Assert.Equal(2, instruction.Operands.Count);
             Assert.Equal(OperandType.Variable, instruction.Operands[0].Type);
             Assert.Equal(0x94, instruction.Operands[0].RawValue);

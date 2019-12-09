@@ -17,16 +17,29 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         {
             operandResolver.AddOperands(Operands, memory.Bytes);
 
+            Size = 1 + Operands.Size;
             OpCode = Bits.BottomFive(memory.Bytes[0]);
             Operation = OpCode switch
             {
-                0x01 => new Operation(nameof(JE), JE),
-                0x0F => new Operation(nameof(LoadW), LoadW),
-                0x14 => new Operation(nameof(Add), Add),
+                0x01 => new Operation(nameof(JE), JE, hasBranch: true),
+                0x0F => new Operation(nameof(LoadW), LoadW, hasStore: true),
+                0x14 => new Operation(nameof(Add), Add, hasStore: true),
                 _ => throw new InvalidOperationException($"Unknown OP2 opcode {OpCode:X}")
             };
-
-            Operation.Method(memory);
+            if (Operation.HasBranch)
+            {
+                var branchData = Machine.Memory.LocationAt(memory.Address + Size);
+                Branch = branchResolver.ResolveBranch(branchData);
+                Size += Branch.Size;
+            }
+            if (Operation.HasStore)
+            {
+                Store = memory.Bytes[Size];
+                Size += 1;
+            }
+            
+            DumpToLog(memory);
+            Operation.Execute(memory);
         }
 
         public void LoadW(MemoryLocation location)
@@ -36,11 +49,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var arrayLocation = baseArray + 2 * index;
             var word = Machine.Memory.WordAt(arrayLocation);
 
-            Store = location.Bytes[Operands.Size + 1];
             Machine.SetWordVariable(Store, word);
-
-            DumpToLog(location);
-            Machine.SetPC(location.Address + Operands.Size + 2);
+            Machine.SetPC(location.Address + Size);
         }
 
         public void Add(MemoryLocation memory)
@@ -49,11 +59,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var b = Operands[1].Value;
             var result = a + b;
 
-            Store = memory.Bytes[Operands.Size + 1];
             Machine.SetWordVariable(Store, result);
-
-            DumpToLog(memory);
-            Machine.SetPC(memory.Address + Operands.Size + 2);
+            Machine.SetPC(memory.Address + Size);
         }
         
         public void JE(MemoryLocation location)
@@ -62,28 +69,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var b = Operands[1].Value;
             var result = a == b;
 
-            var branchData = Machine.Memory.LocationAt(location.Address + Operands.Size + 1);
-            Branch = branchResolver.ResolveBranch(branchData);
-
-            var size = 1 + Operands.Size + Branch.Size;
-            if (Branch.Offset == 0 && Branch.BranchOnTrue == result)
-            {
-                throw new InvalidOperationException("Means to return false from current routine");
-            }
-            else if(Branch.Offset == 1 && Branch.BranchOnTrue == result)
-            {
-                throw new InvalidOperationException("measure to return true from current routine");
-            }
-            else if(Branch.BranchOnTrue == result)
-            {    
-                var newPC = location.Address + size + Branch.Offset - 2;
-                Machine.SetPC(newPC);
-            }
-            else
-            {
-                Machine.SetPC(location.Address + size);
-            }
-            DumpToLog(location);
+            Branch.Go(result, Machine, Size, location);
         }
     }
 }

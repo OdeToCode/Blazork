@@ -12,15 +12,27 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         public override void Execute(MemoryLocation memory)
         {
             operandResolver.AddOperands(Operands, memory.Bytes.Slice(1));
-            
+
+            Size = 2 + Operands.Size;
             OpCode = Bits.BottomFive(memory.Bytes[0]);
             Operation = OpCode switch
             {
-                0x00 => new Operation(nameof(Call), Call),
+                0x00 => new Operation(nameof(Call), Call, hasStore: true),
                 _ => throw new InvalidOperationException($"Unknown VAR opcode {OpCode:X}")
             };
+            if (Operation.HasBranch)
+            {
+                throw new NotImplementedException("Do this");
+                Size += Branch.Size;
+            }
+            if(Operation.HasStore)
+            {
+                Store = memory.Bytes[Size];
+                Size += 1;
+            }
             
-            Operation.Method(memory);
+            DumpToLog(memory);
+            Operation.Execute(memory);
         }
 
         public void Call(MemoryLocation memory)
@@ -28,10 +40,9 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var callAddress = Machine.Memory.Unpack(Operands[0].Value);
             var methodMemory = Machine.Memory.LocationAt(callAddress);
             var method = new MethodDescriptor(methodMemory, Machine);
-            var callInstructionSize = 2 + (Operands.Size);
+
             
-            Store = memory.Bytes[callInstructionSize];
-            var newFrame = new StackFrame(memory.Address + callInstructionSize,
+            var newFrame = new StackFrame(memory.Address + Size,
                                           method.LocalsCount, Store);
             Machine.StackFrames.PushFrame(newFrame);
             
@@ -40,7 +51,6 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 Machine.SetWordVariable(i, Operands[i].Value);
             }
 
-            DumpToLog(memory);
             Machine.SetPC(callAddress + method.HeaderSize);
         }
 

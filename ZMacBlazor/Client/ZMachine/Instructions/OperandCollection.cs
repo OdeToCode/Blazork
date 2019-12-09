@@ -17,7 +17,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var sb = new StringBuilder();
             for(var i =0; i < Count; i++)
             {
-                sb.Append($" {i+1} : {OperandType.ToString(this[i].Type)} : {this[i].RawValue:X} ");
+                sb.Append($" Arg[{i+1}] : {OperandType.ToString(this[i].Type)} : {this[i].RawValue:X} ");
             }
             return sb.ToString();
         }

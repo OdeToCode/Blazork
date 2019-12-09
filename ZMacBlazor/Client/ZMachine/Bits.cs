@@ -12,6 +12,12 @@ namespace ZMacBlazor.Client.ZMachine
             return (b1, b2);
         }
 
+        public static byte FourAndFive(byte value)
+        {
+            var mask = (byte)0b0011_0000;
+            return (byte)((value & mask) >> 4);
+        }
+
         public static byte[] BreakIntoTwos(byte value)
         {
             var result = new byte[4];
@@ -52,7 +58,16 @@ namespace ZMacBlazor.Client.ZMachine
             var msb = bytes[0];
             var lsb = bytes[1];
 
-            return ((msb << 8) | (lsb)); 
+            return ((msb << 8) | lsb); 
+        }
+
+        public static int MakeSignedWord(ReadOnlySpan<byte> bytes)
+        {
+            var msb = bytes[0];
+            var lsb = bytes[1];
+            var value = (short)((msb << 8) | lsb);
+
+            return value;
         }
 
         public static bool SixSevenSet(byte value)

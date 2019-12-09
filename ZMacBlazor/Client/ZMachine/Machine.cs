@@ -24,7 +24,7 @@ namespace ZMacBlazor.Client.ZMachine
         {
             var decoder = new InstructionDecoder(this);
 
-            var i = 100;
+            var i = 500;
             while(--i > 0)
             {
                 var memory = Memory.LocationAt(PC);

@@ -13,6 +13,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Operation = EmptyOperation;
             Store = int.MinValue;
             Branch = Branch.NullBranch;
+            Size = 0;
         }
 
         public void DumpToLog(MemoryLocation memory)
@@ -27,7 +28,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"OP: {Operation.Name}");
+            sb.AppendLine($"{Operation.Name}");
+            sb.AppendLine($"\tSize: {Size}");
             sb.AppendLine($"\t{Operands.ToString()}");
             if(Store >= 0)
             {
@@ -48,7 +50,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         public Branch Branch { get; set; }
         public byte OpCode { get; protected set; }
         public int Store { get; set; }
-        
+        public int Size { get; set; }
+
         public readonly static Operation EmptyOperation = new Operation("Invalid", l => { });
     }
 }
