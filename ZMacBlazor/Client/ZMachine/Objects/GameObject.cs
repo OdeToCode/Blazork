@@ -53,19 +53,24 @@ namespace ZMacBlazor.Client.ZMachine.Objects
                 Child = entry[6];
                 PropertyPointer = Bits.MakeWord(entry.Slice(7,2));
             }
+            this.PropertyTable = new GameObjectPropertyTable(this.machine, PropertyPointer);
         }
 
         public void SetAttribute(int number, bool value)
         {
-            throw new NotImplementedException();
+            var byteToSet = Attributes[number / 8];
+            var mask = 0x80 >> (number % 8);
+            var result = (byte)(byteToSet | mask);
+            
+            Attributes[number / 8] = result;
         }
 
         public bool ReadAttribute(int number)
         {
-            var value = Attributes[number / 8];
+            var byteToTest = Attributes[number / 8];
             var mask = 0x80 >> (number % 8);
 
-            return (value & mask) > 0;
+            return (byteToTest & mask) > 0;
         }
 
         public Span<byte> Attributes
@@ -81,6 +86,7 @@ namespace ZMacBlazor.Client.ZMachine.Objects
         public int Sibling { get; }
         public int Child { get; }
         public int PropertyPointer { get; }
+        public GameObjectPropertyTable PropertyTable { get; }
 
         private readonly Machine machine;
         private readonly int startAddress;

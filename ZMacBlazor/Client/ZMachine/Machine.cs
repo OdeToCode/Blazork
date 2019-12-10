@@ -12,7 +12,7 @@ namespace ZMacBlazor.Client.ZMachine
         {
             Memory = new MachineMemory(Stream.Null);
             StackFrames = new FrameCollection(this);
-            ObjectTable = new ObjectTable(this);
+            ObjectTable = new GameObjectTable(this);
             Decoder = new InstructionDecoder(this);
             Logger = logger;
         }
@@ -97,7 +97,7 @@ namespace ZMacBlazor.Client.ZMachine
 
         public byte Version => Memory.Version;
         public int PC { get; protected set; }
-        public ObjectTable ObjectTable { get; protected set; }
+        public GameObjectTable ObjectTable { get; protected set; }
         public InstructionDecoder Decoder { get; protected set; }
         public MachineMemory Memory { get; protected set; }
         public FrameCollection StackFrames { get; protected set; }

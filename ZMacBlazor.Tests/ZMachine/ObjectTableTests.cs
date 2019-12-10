@@ -35,10 +35,9 @@ namespace ZMacBlazor.Tests.ZMachine
             Assert.Equal(0x205F, object227.PropertyPointer);
             Assert.True(object227.ReadAttribute(11));
             Assert.True(object227.ReadAttribute(12));
-            Assert.False(object227.ReadAttribute(13));
-            object227.SetAttribute(13, true);
-            Assert.False(object227.ReadAttribute(13));
             Assert.False(object227.ReadAttribute(14));
+            object227.SetAttribute(14, true);
+            Assert.True(object227.ReadAttribute(14));
 
             var object250 = machine.ObjectTable.GameObjects[249];
             Assert.Equal(249, object250.Parent);

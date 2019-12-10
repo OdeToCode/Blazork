@@ -8,12 +8,12 @@ namespace ZMacBlazor.Client.ZMachine.Objects
     // This contains 31 words in Versions 1 to 3 and 63 in Versions 4 and later. 
     // When the game attempts to read the value of property n for an object which does not provide 
     // property n, the n-th entry in this table is the resulting value.
-    public class ObjectTable
+    public class GameObjectTable
     {
         private int[] defaults = Array.Empty<int>();
         private Machine machine;
 
-        public ObjectTable(Machine machine)
+        public GameObjectTable(Machine machine)
         {
             this.machine = machine;
             this.GameObjects = new List<GameObject>();
