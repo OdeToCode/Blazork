@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ZMacBlazor.Client.ZMachine.Objects
@@ -15,10 +16,8 @@ namespace ZMacBlazor.Client.ZMachine.Objects
 
             var location = machine.Memory.LocationAt(startingAddress);
             var textLength = location.Bytes[0] * 2;
-
-
         }
-
-        public string Description { get; set; }
+        
+        public string Description { get; set; } = "";
     }
 }
