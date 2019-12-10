@@ -19,6 +19,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             {
                 0x00 => new Operation(nameof(Call), Call, hasStore: true),
                 0x01 => new Operation(nameof(StoreW), StoreW),
+                0x03 => new Operation(nameof(PutProp), PutProp),
                 _ => throw new InvalidOperationException($"Unknown VAR opcode {OpCode:X}")
             };
             if (Operation.HasBranch)
@@ -34,6 +35,21 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void PutProp(MemoryLocation location)
+        {
+            // Writes the given value to the given property of the given object.If the property 
+            // does not exist for that object, the interpreter should halt with a suitable error message.
+            // If the property length is 1, then the interpreter should store only the least 
+            // significant byte of the value. (For instance, storing - 1 into a 1 - byte property 
+            // results in the property value 255.) As with get_prop the property length must not be more 
+            // than 2: if it is, the behaviour of the opcode is undefined.
+
+            //Set property prop on object obj to a. The property must be present on the object.If the
+            // property length is 1, then a must be byte-valued.
+
+            //   e3 57 9c 06 04          PUT_PROP        "magic boat",#06,#04
         }
 
         public void StoreW(MemoryLocation location)

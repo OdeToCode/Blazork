@@ -33,7 +33,7 @@ namespace ZMacBlazor.Tests.ZMachine
             Assert.Equal(3, memory.Version);
             Assert.Equal(20023, memory.HighMemory);
             Assert.Equal(0x4F05, memory.StartingProgramCounter);
-            Assert.Equal(688, memory.ObjectTable);
+            Assert.Equal(0x02B0, memory.ObjectTable);
             Assert.Equal(15137, memory.Dictionary);
         }
     }

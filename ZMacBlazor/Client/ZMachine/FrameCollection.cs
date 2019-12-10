@@ -25,6 +25,12 @@ namespace ZMacBlazor.Client.ZMachine
             innerStack.Push(newFrame);
         }
 
+        public void Initialize()
+        {
+            var startingStackFrame = new StackFrame(0, 0, -1);
+            PushFrame(startingStackFrame);
+        }
+
         public Span<int> Locals
         {
             get

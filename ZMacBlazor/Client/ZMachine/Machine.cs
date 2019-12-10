@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using ZMacBlazor.Client.ZMachine.Instructions;
+using ZMacBlazor.Client.ZMachine.Objects;
 
 namespace ZMacBlazor.Client.ZMachine
 {
@@ -11,6 +12,8 @@ namespace ZMacBlazor.Client.ZMachine
         {
             Memory = new MachineMemory(Stream.Null);
             StackFrames = new FrameCollection(this);
+            ObjectTable = new ObjectTable(this);
+            Decoder = new InstructionDecoder(this);
             Logger = logger;
         }
 
@@ -18,19 +21,18 @@ namespace ZMacBlazor.Client.ZMachine
         {
             Memory = new MachineMemory(memoryBytes);
             PC = Memory.StartingProgramCounter;
+
+            ObjectTable.Initialize();
+            StackFrames.Initialize();
         }
 
         public void Execute()
-        {
-            var decoder = new InstructionDecoder(this);
-            var startingStackFrame = new StackFrame(0, 0, -1);
-            StackFrames.PushFrame(startingStackFrame);
-
-            var i = 500;
+        {   
+            var i = 2000;
             while(--i > 0)
             {
                 var memory = Memory.LocationAt(PC);
-                var instruction = decoder.Decode(memory);
+                var instruction = Decoder.Decode(memory);
                 instruction.Execute(memory);
             }
         }
@@ -95,6 +97,8 @@ namespace ZMacBlazor.Client.ZMachine
 
         public byte Version => Memory.Version;
         public int PC { get; protected set; }
+        public ObjectTable ObjectTable { get; protected set; }
+        public InstructionDecoder Decoder { get; protected set; }
         public MachineMemory Memory { get; protected set; }
         public FrameCollection StackFrames { get; protected set; }
         public ILogger Logger { get; }
