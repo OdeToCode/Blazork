@@ -62,7 +62,7 @@ namespace ZMacBlazor.Client.ZMachine.Text
             while (!end)
             {
                 var value = Bits.MakeWord(bytes.Slice(position, 2));
-                end = (value & 0x80) > 0;
+                end = (value & 0x8000) > 0;
                 
                 for(var i = 10; i >= 0; i -=5)
                 {
@@ -89,6 +89,10 @@ namespace ZMacBlazor.Client.ZMachine.Text
             return result.ToString();
         }
 
+        // 04 -> 54 CE 5C 01 29 A6 CD 38 
+        // 0 10101 00110 01110
+                 
+
         // In Versions 3 and later, Z-characters 1, 2 and 3 represent abbreviations, 
         // sometimes also called 'synonyms' (for traditional reasons): the next Z-character indicates 
         // which abbreviation string to print.If z is the first Z-character(1, 2 or 3) and x the 
@@ -96,10 +100,15 @@ namespace ZMacBlazor.Client.ZMachine.Text
         // table and print the string at that word address.
         public string DecodeAbbreviation(int index, int number)
         {
-            var offset = (32 * (index - 1)) + number;
-            var abbreviationsTableAddress = machine.Memory.WordAt(Header.ABBREVIATIONS);
-            var abbreviationAddress = machine.Memory.WordAt(abbreviationsTableAddress + offset) * 2;
-            var abbreviationBytes = machine.Memory.SpanAt(machine.Memory.Unpack(abbreviationAddress));
+            var offset = (32 * (index - 1)) + (number * 2);
+            var pppAbbreviation = machine.Memory.WordAt(Header.ABBREVIATIONS);
+            var ppAbbreviation = machine.Memory.WordAddressAt(pppAbbreviation + offset);
+
+            var abbreviationBytes = machine.Memory.SpanAt(ppAbbreviation);
+
+            //var pAbbrevation = machine.Memory.WordAt(ppAbbreviation);
+            //var abbreviationBytes = machine.Memory.SpanAt(pAbbrevation);
+
             var result = Decode(abbreviationBytes);
             return result;
         }
@@ -109,7 +118,6 @@ namespace ZMacBlazor.Client.ZMachine.Text
             if(state == State.Abbr)
             {
                 var set = abbreviationSet;
-                var index = value;
 
                 abbreviationSet = 0;
                 state = State.A0;

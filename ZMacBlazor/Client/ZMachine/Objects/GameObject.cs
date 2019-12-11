@@ -58,11 +58,24 @@ namespace ZMacBlazor.Client.ZMachine.Objects
 
         public void SetAttribute(int number, bool value)
         {
+            var mask = (byte)(0x80 >> (number % 8));
+            if(value == false)
+            {
+                mask ^= mask;
+            }
+
             var byteToSet = Attributes[number / 8];
-            var mask = 0x80 >> (number % 8);
-            var result = (byte)(byteToSet | mask);
+
+            if(value == false)
+            {
+                byteToSet &= mask;
+            }
+            else
+            {
+                byteToSet |= mask;
+            }
             
-            Attributes[number / 8] = result;
+            Attributes[number / 8] = byteToSet;
         }
 
         public bool ReadAttribute(int number)

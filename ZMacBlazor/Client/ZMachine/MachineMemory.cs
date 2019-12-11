@@ -27,6 +27,41 @@ namespace ZMacBlazor.Client.ZMachine
             return Bits.MakeWord(SpanAt(address));
         }
 
+        public int WordAddressAt(int address)
+        {
+            return Bits.MakeWord(SpanAt(address)) * 2;
+        }
+
+        public int Unpack(int address, bool print = false)
+        {
+            switch (Version)
+            {
+                case 0x01:
+                case 0x02:
+                case 0x03:
+                    return (address * 2);
+
+                case 0x04:
+                case 0x05:
+                    return (address * 4);
+
+                case 0x06:
+                case 0x07:
+                    if (print)
+                    {
+                        return ((address * 4) + (8 * StringOffset));
+                    }
+                    else
+                    {
+                        return ((address * 4) + (8 * RoutineOffset));
+                    }
+                case 0x08:
+                    return (address * 8);
+                default:
+                    throw new InvalidOperationException($"Bad version number {Version:X}");
+            }
+        }
+        
         public void StoreByteAt(int address, byte value)
         {
             contents[address] = value;
@@ -52,36 +87,6 @@ namespace ZMacBlazor.Client.ZMachine
                 return contents.AsSpan(address, length);
             }
             return contents.AsSpan(address);
-        }
-
-        public int Unpack(int address, bool print = false)
-        {
-            switch(Version)
-            {
-                case 0x01:
-                case 0x02:
-                case 0x03:
-                    return (address * 2);
-
-                case 0x04:
-                case 0x05:
-                    return (address * 4);
-
-                case 0x06:
-                case 0x07:
-                    if(print)
-                    {
-                        return ((address * 4) + (8 * StringOffset));
-                    }
-                    else
-                    {
-                        return ((address * 4) + (8 * RoutineOffset));
-                    }
-                case 0x08:
-                    return (address * 8);
-                default:
-                    throw new InvalidOperationException($"Bad version number {Version:X}");
-            }
         }
 
         public byte Version => contents[Header.VERSION];

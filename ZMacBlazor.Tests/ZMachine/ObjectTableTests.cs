@@ -28,6 +28,8 @@ namespace ZMacBlazor.Tests.ZMachine
             Assert.Equal(0, object1.Child);
             Assert.True(object1.ReadAttribute(14));
             Assert.True(object1.ReadAttribute(28));
+            object1.SetAttribute(28, false);
+            Assert.False(object1.ReadAttribute(28));
             Assert.False(object1.ReadAttribute(0));
             Assert.Equal("pair of hands", object1.PropertyTable.Description);
 

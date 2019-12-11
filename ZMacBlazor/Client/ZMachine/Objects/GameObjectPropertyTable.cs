@@ -20,7 +20,7 @@ namespace ZMacBlazor.Client.ZMachine.Objects
             var location = machine.Memory.LocationAt(startingAddress);
             var textLength = location.Bytes[0] * 2;
             var decoder = new ZStringDecoder(machine);
-            Description = decoder.Decode(location.Bytes);
+            Description = decoder.Decode(location.Bytes.Slice(1));
         }
         
         public string Description { get; set; } = "";
