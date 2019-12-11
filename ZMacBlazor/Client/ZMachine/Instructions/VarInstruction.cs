@@ -49,7 +49,28 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             //Set property prop on object obj to a. The property must be present on the object.If the
             // property length is 1, then a must be byte-valued.
 
-            //   e3 57 9c 06 04          PUT_PROP        "magic boat",#06,#04
+            var objectNumber = Operands[0].Value;
+            var gameObject = machine.ObjectTable.GameObjects[objectNumber - 1];
+
+            var propertyNumber = Operands[1].Value;
+            var gameProperty = gameObject.Properties[propertyNumber];
+
+            if(gameProperty.Value.Length > 2)
+            {
+                throw new InvalidOperationException("Illegal to PutProp on a property larger than 2 bytes");
+            }
+            else if(gameProperty.Value.Length == 1)
+            {
+                gameProperty.Value.Span[0] = (byte)(Operands[2].Value & 0x00FF);
+            }
+            else
+            {
+                gameProperty.Value.Span[0] = (byte)((Operands[2].Value & 0xFF00) >> 8);
+                gameProperty.Value.Span[1] = (byte)(Operands[2].Value & 0x00FF);
+            }
+            
+            machine.SetPC(location.Address + Size);
+            DumpToLog(location);
         }
 
         public void StoreW(SpanLocation location)
@@ -58,31 +79,31 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var index = Operands[1].Value;
             var arrayLocation = baseArray + (2 * index);
             
-            var entry = Machine.Memory.SpanAt(arrayLocation, 2);
+            var entry = machine.Memory.SpanAt(arrayLocation, 2);
             var value = Operands[2].Value;
             
 
             DumpToLog(location);
-            Machine.SetPC(location.Address + Size);
+            machine.SetPC(location.Address + Size);
         }
 
         public void Call(SpanLocation memory)
         {
-            var callAddress = Machine.Memory.Unpack(Operands[0].Value);
-            var methodMemory = Machine.Memory.SpanAt(callAddress);
-            var method = new MethodDescriptor(methodMemory, Machine);
+            var callAddress = machine.Memory.Unpack(Operands[0].Value);
+            var methodMemory = machine.Memory.SpanAt(callAddress);
+            var method = new MethodDescriptor(methodMemory, machine);
 
             
             var newFrame = new StackFrame(memory.Address + Size,
                                           method.LocalsCount, Store);
-            Machine.StackFrames.PushFrame(newFrame);
+            machine.StackFrames.PushFrame(newFrame);
             
             for(var i = 1; i < Operands.Count; i++)
             {
-                Machine.SetWordVariable(i, Operands[i].Value);
+                machine.SetWordVariable(i, Operands[i].Value);
             }
 
-            Machine.SetPC(callAddress + method.HeaderSize);
+            machine.SetPC(callAddress + method.HeaderSize);
         }
 
         VarOperandResolver operandResolver;

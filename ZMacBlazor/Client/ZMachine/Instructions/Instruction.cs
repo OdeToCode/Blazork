@@ -8,7 +8,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
     {
         public Instruction(Machine machine)
         {
-            Machine = machine;
+            this.machine = machine;
             Operands = new OperandCollection(machine);
             Operation = EmptyOperation;
             Store = int.MinValue;
@@ -22,7 +22,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             sb.Append($"{ToString()}");
             sb.Append($"\t Raw: @{memory.Address:X} {memory.ToString()}");
 
-            Machine.Logger.Log(LogLevel.Trace, sb.ToString());
+            machine.Logger.Log(LogLevel.Trace, sb.ToString());
         }
 
         public override string ToString()
@@ -45,13 +45,13 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         public abstract void Execute(SpanLocation memory);
 
         public OperandCollection Operands { get; }
-        public Machine Machine { get; }
         public Operation Operation { get; protected set; }
         public Branch Branch { get; set; }
         public byte OpCode { get; protected set; }
         public int Store { get; set; }
         public int Size { get; set; }
 
+        readonly protected Machine machine;
         public readonly static Operation EmptyOperation = new Operation("Invalid", l => { });
     }
 }

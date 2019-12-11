@@ -30,7 +30,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             };
             if (Operation.HasBranch)
             {
-                var branchData = Machine.Memory.SpanAt(memory.Address + Size);
+                var branchData = machine.Memory.SpanAt(memory.Address + Size);
                 Branch = branchResolver.ResolveBranch(branchData);
                 Size += Branch.Size;
             }
@@ -47,10 +47,10 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         public void Ret(SpanLocation location)
         {
             var returnValue = Operands[0].Value;
-            var frame = Machine.StackFrames.PopFrame();
+            var frame = machine.StackFrames.PopFrame();
 
-            Machine.SetWordVariable(frame.StoreVariable, returnValue);
-            Machine.SetPC(frame.ReturnPC);
+            machine.SetWordVariable(frame.StoreVariable, returnValue);
+            machine.SetPC(frame.ReturnPC);
         }
 
         public void Jump(SpanLocation location)
@@ -61,7 +61,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             // routine call state), although it is considered bad practice to do so and the Txd 
             // disassembler is confused by it.
             var offset = Operands[0].SignedValue;
-            Machine.SetPC(location.Address + Size + offset - 2);
+            machine.SetPC(location.Address + Size + offset - 2);
         }
     }
 }

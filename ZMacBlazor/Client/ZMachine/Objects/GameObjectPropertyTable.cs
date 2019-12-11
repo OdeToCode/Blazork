@@ -25,7 +25,13 @@ namespace ZMacBlazor.Client.ZMachine.Objects
             while(propertyEntry.Bytes.Span[0] != 0)
             {
                 var property = new GameObjectProperty(machine, propertyEntry);
-                var nextEntryAddress = propertyEntry.Address + property.Size;
+                var nextEntryAddress = propertyEntry.Address + property.Size + 1;
+
+                if(machine.Version > 3)
+                {
+                    throw new NotImplementedException("Need to adjust prope entry size for 2 size bytes senario");
+                }
+
                 Properties.Add(property.Number, property);
 
                 propertyEntry = machine.Memory.MemoryAt(nextEntryAddress);                

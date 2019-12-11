@@ -45,5 +45,6 @@ namespace ZMacBlazor.Client.ZMachine.Objects
         public int Number { get; }
         public Memory<byte> Value { get; set; }
         public int Size { get; set; }
+
     }
 }

@@ -52,6 +52,7 @@ namespace ZMacBlazor.Tests.ZMachine
             Assert.Equal(0, object250.Child);
             Assert.Equal(0x2263, object250.PropertyPointer);
             Assert.Equal("board", object250.PropertyTable.Description);
+            Assert.True(MemoryEqual(new byte[] { 0x3C, 0xDA, 0x3C, 0xCC }, object250.Properties[18].Value));
         }
 
         private bool MemoryEqual(byte[] value1, Memory<byte> value2)
