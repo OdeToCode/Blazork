@@ -29,6 +29,7 @@ namespace ZMacBlazor.Tests.ZMachine
             Assert.True(object1.ReadAttribute(14));
             Assert.True(object1.ReadAttribute(28));
             Assert.False(object1.ReadAttribute(0));
+            Assert.Equal("pair of hands", object1.PropertyTable.Description);
 
 
             var object227 = machine.ObjectTable.GameObjects[226];
