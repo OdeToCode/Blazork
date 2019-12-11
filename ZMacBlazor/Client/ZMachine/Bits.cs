@@ -61,6 +61,11 @@ namespace ZMacBlazor.Client.ZMachine
             return ((msb << 8) | lsb); 
         }
 
+        public static int TopThree(byte value)
+        {
+            return value >> 5;
+        }
+
         public static int MakeSignedWord(ReadOnlySpan<byte> bytes)
         {
             var msb = bytes[0];

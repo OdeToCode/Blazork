@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ZMacBlazor.Client.ZMachine.Objects
 {
@@ -99,12 +100,17 @@ namespace ZMacBlazor.Client.ZMachine.Objects
         public int Sibling { get; }
         public int Child { get; }
         public int PropertyPointer { get; }
+        
         public string Description 
         {
             get
             {
                 return PropertyTable.Description;
             }
+        }
+        public Dictionary<int, GameObjectProperty> Properties 
+        { 
+            get { return PropertyTable.Properties; }
         }
 
 

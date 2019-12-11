@@ -80,7 +80,7 @@ namespace ZMacBlazor.Client.ZMachine
             {
                 return new MemoryLocation(address, contents.AsMemory(address, length));
             }
-            return new MemoryLocation(address, contents.AsMemory(address, length));
+            return new MemoryLocation(address, contents.AsMemory(address));
         }
 
         public SpanLocation SpanAt(int address, int length = 0)
