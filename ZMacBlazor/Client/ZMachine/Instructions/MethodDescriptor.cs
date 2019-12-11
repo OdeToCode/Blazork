@@ -5,7 +5,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 {
     public class MethodDescriptor
     {
-        public MethodDescriptor(MemoryLocation memory, Machine machine)
+        public MethodDescriptor(SpanLocation memory, Machine machine)
         {
             if(machine == null) { throw new ArgumentNullException(nameof(machine)); }
 

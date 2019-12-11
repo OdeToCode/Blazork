@@ -2,7 +2,7 @@
 
 namespace ZMacBlazor.Client.ZMachine.Instructions
 {
-    public delegate void OperationDelegate(MemoryLocation memory);
+    public delegate void OperationDelegate(SpanLocation memory);
 
     public class Operation
     {
@@ -21,7 +21,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             method = Method;
         }
 
-        public void Execute(MemoryLocation location)
+        public void Execute(SpanLocation location)
         {
             Method(location);
         }

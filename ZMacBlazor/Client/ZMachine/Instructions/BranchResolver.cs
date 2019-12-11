@@ -17,7 +17,7 @@
 
     public class BranchResolver
     {
-        public Branch ResolveBranch(MemoryLocation memory)
+        public Branch ResolveBranch(SpanLocation memory)
         {
             var branchOnTrue = Bits.SevenSet(memory.Bytes[0]);
             var oneByteOffset = Bits.SixSet(memory.Bytes[0]);

@@ -16,7 +16,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             branchResolver = new BranchResolver();
         }
 
-        public override void Execute(MemoryLocation memory)
+        public override void Execute(SpanLocation memory)
         {
             operandResolver.AddOperands(Operands, memory.Bytes);
 
@@ -30,7 +30,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             };
             if (Operation.HasBranch)
             {
-                var branchData = Machine.Memory.LocationAt(memory.Address + Size);
+                var branchData = Machine.Memory.SpanAt(memory.Address + Size);
                 Branch = branchResolver.ResolveBranch(branchData);
                 Size += Branch.Size;
             }
@@ -44,7 +44,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Operation.Execute(memory);
         }
 
-        public void Ret(MemoryLocation location)
+        public void Ret(SpanLocation location)
         {
             var returnValue = Operands[0].Value;
             var frame = Machine.StackFrames.PopFrame();
@@ -53,7 +53,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Machine.SetPC(frame.ReturnPC);
         }
 
-        public void Jump(MemoryLocation location)
+        public void Jump(SpanLocation location)
         {
             //  Jump(unconditionally) to the given label. (This is not a branch instruction and the 
             // operand is a 2 - byte signed offset to apply to the program counter.) 

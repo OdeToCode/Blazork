@@ -11,7 +11,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             BranchOnTrue = branchOnTrue;
         }
 
-        public void Go(bool result, Machine machine, int instructionSize, MemoryLocation location)
+        public void Go(bool result, Machine machine, int instructionSize, SpanLocation location)
         {
             if (Offset == 0 && BranchOnTrue == result)
             {

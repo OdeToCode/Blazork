@@ -16,7 +16,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Size = 0;
         }
 
-        public void DumpToLog(MemoryLocation memory)
+        public void DumpToLog(SpanLocation memory)
         {
             var sb = new StringBuilder();
             sb.Append($"{ToString()}");
@@ -42,7 +42,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             return sb.ToString();
         }
 
-        public abstract void Execute(MemoryLocation memory);
+        public abstract void Execute(SpanLocation memory);
 
         public OperandCollection Operands { get; }
         public Machine Machine { get; }

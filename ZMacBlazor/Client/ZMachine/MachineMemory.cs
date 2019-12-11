@@ -24,12 +24,12 @@ namespace ZMacBlazor.Client.ZMachine
 
         public int WordAt(int address)
         {
-            return Bits.MakeWord(SpanAt(address));
+            return Bits.MakeWord(SpanAt(address).Bytes);
         }
 
         public int WordAddressAt(int address)
         {
-            return Bits.MakeWord(SpanAt(address)) * 2;
+            return Bits.MakeWord(SpanAt(address).Bytes) * 2;
         }
 
         public int Unpack(int address, bool print = false)
@@ -74,28 +74,31 @@ namespace ZMacBlazor.Client.ZMachine
             contents[address + 1] = lsb;
         }
 
-        public MemoryLocation LocationAt(int address, int length = 0)
+        public MemoryLocation MemoryAt(int address, int length = 0)
         {
-            var location = new MemoryLocation(address, SpanAt(address, length));
-            return location;
+            if(length != 0)
+            {
+                return new MemoryLocation(address, contents.AsMemory(address, length));
+            }
+            return new MemoryLocation(address, contents.AsMemory(address, length));
         }
 
-        public Span<byte> SpanAt(int address, int length = 0)
+        public SpanLocation SpanAt(int address, int length = 0)
         {
             if (length != 0)
             {
-                return contents.AsSpan(address, length);
+                return new SpanLocation(address, contents.AsSpan(address, length));
             }
-            return contents.AsSpan(address);
+            return new SpanLocation(address, contents.AsSpan(address));
         }
 
         public byte Version => contents[Header.VERSION];
     
-        public int HighMemory => Bits.MakeWord(SpanAt(Header.HIGHMEMORY));
+        public int HighMemory => Bits.MakeWord(SpanAt(Header.HIGHMEMORY).Bytes);
 
-        public int RoutineOffset => Bits.MakeWord(SpanAt(Header.ROUTINESOFFSET));
+        public int RoutineOffset => Bits.MakeWord(SpanAt(Header.ROUTINESOFFSET).Bytes);
 
-        public int StringOffset => Bits.MakeWord(SpanAt(Header.STATICSTRINGSOFFSET));
+        public int StringOffset => Bits.MakeWord(SpanAt(Header.STATICSTRINGSOFFSET).Bytes);
 
         public int StartingProgramCounter 
         {
@@ -103,7 +106,7 @@ namespace ZMacBlazor.Client.ZMachine
             {
                 if(Version < 6)
                 {
-                    return Bits.MakeWord(SpanAt(Header.PC));
+                    return Bits.MakeWord(SpanAt(Header.PC).Bytes);
                 }
                 else
                 {
@@ -112,17 +115,17 @@ namespace ZMacBlazor.Client.ZMachine
             }
         }
 
-        public Span<byte> Globals => SpanAt(Header.GLOBALS);
+        public Span<byte> Globals => SpanAt(Header.GLOBALS).Bytes;
 
-        public int Dictionary => Bits.MakeWord(SpanAt(Header.DICTIONARY));
+        public int Dictionary => Bits.MakeWord(SpanAt(Header.DICTIONARY).Bytes);
 
-        public int ObjectTable => Bits.MakeWord(SpanAt(Header.OBJECTTABLE));
+        public int ObjectTable => Bits.MakeWord(SpanAt(Header.OBJECTTABLE).Bytes);
 
         public int FileLength
         {
             get 
             {
-                var value = Bits.MakeWord(SpanAt(Header.FILELENGTH));
+                var value = Bits.MakeWord(SpanAt(Header.FILELENGTH).Bytes);
                 if(Version <= 3)
                 {
                     return value * 2;

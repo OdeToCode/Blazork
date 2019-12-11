@@ -80,7 +80,7 @@ namespace ZMacBlazor.Client.ZMachine.Text
                 }
 
                 position += 2;
-                if(++failSafe > 255)
+                if(++failSafe > 1024)
                 {
                     throw new InvalidOperationException("Probably in an infinite loop trying to decode");
                 }
@@ -88,10 +88,6 @@ namespace ZMacBlazor.Client.ZMachine.Text
 
             return result.ToString();
         }
-
-        // 04 -> 54 CE 5C 01 29 A6 CD 38 
-        // 0 10101 00110 01110
-                 
 
         // In Versions 3 and later, Z-characters 1, 2 and 3 represent abbreviations, 
         // sometimes also called 'synonyms' (for traditional reasons): the next Z-character indicates 
@@ -101,13 +97,9 @@ namespace ZMacBlazor.Client.ZMachine.Text
         public string DecodeAbbreviation(int index, int number)
         {
             var offset = (32 * (index - 1)) + (number * 2);
-            var pppAbbreviation = machine.Memory.WordAt(Header.ABBREVIATIONS);
-            var ppAbbreviation = machine.Memory.WordAddressAt(pppAbbreviation + offset);
-
-            var abbreviationBytes = machine.Memory.SpanAt(ppAbbreviation);
-
-            //var pAbbrevation = machine.Memory.WordAt(ppAbbreviation);
-            //var abbreviationBytes = machine.Memory.SpanAt(pAbbrevation);
+            var ppAbbreviation = machine.Memory.WordAt(Header.ABBREVIATIONS);
+            var pAbbreviation = machine.Memory.WordAddressAt(ppAbbreviation + offset);
+            var abbreviationBytes = machine.Memory.SpanAt(pAbbreviation).Bytes;
 
             var result = Decode(abbreviationBytes);
             return result;

@@ -38,7 +38,7 @@ namespace ZMacBlazor.Client.ZMachine.Objects
                 this.entrySize = 14; 
             }
 
-            var entry = machine.Memory.SpanAt(startAddress, entrySize);
+            var entry = machine.Memory.SpanAt(startAddress, entrySize).Bytes;
             if(this.machine.Version > 3)
             {
                 Parent = Bits.MakeWord(entry.Slice(6, 2));
@@ -91,7 +91,7 @@ namespace ZMacBlazor.Client.ZMachine.Objects
             get
             {
                 var attributeSize = machine.Version > 3 ? 6 : 4;
-                return machine.Memory.SpanAt(startAddress, attributeSize);
+                return machine.Memory.SpanAt(startAddress, attributeSize).Bytes;
             }
         }
 
@@ -99,8 +99,16 @@ namespace ZMacBlazor.Client.ZMachine.Objects
         public int Sibling { get; }
         public int Child { get; }
         public int PropertyPointer { get; }
-        public GameObjectPropertyTable PropertyTable { get; }
+        public string Description 
+        {
+            get
+            {
+                return PropertyTable.Description;
+            }
+        }
 
+
+        public GameObjectPropertyTable PropertyTable { get; }
         private readonly Machine machine;
         private readonly int startAddress;
         private readonly int entrySize;

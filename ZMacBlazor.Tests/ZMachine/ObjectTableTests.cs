@@ -41,12 +41,14 @@ namespace ZMacBlazor.Tests.ZMachine
             Assert.False(object227.ReadAttribute(14));
             object227.SetAttribute(14, true);
             Assert.True(object227.ReadAttribute(14));
+            Assert.Equal("basket", object227.PropertyTable.Description);
 
             var object250 = machine.ObjectTable.GameObjects[249];
             Assert.Equal(249, object250.Parent);
             Assert.Equal(73, object250.Sibling);
             Assert.Equal(0, object250.Child);
             Assert.Equal(0x2263, object250.PropertyPointer);
+            Assert.Equal("board", object250.PropertyTable.Description);
         }
     }
 }

@@ -60,7 +60,7 @@ namespace ZMacBlazor.Client.ZMachine.Objects
             defaults = new int[size];
 
             var startLocation = machine.Memory.WordAt(Header.OBJECTTABLE);
-            var defaultValues = machine.Memory.LocationAt(startLocation, size);
+            var defaultValues = machine.Memory.SpanAt(startLocation, size);
             for (var i = 0; i < size; i++)
             {
                 defaults[i] = defaultValues.Bytes[i];

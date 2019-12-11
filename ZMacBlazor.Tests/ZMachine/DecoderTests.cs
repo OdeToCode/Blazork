@@ -27,7 +27,7 @@ namespace ZMacBlazor.Tests.ZMachine
             machine.Load(file);
             
             var decoder = new InstructionDecoder(machine);
-            var memory = machine.Memory.LocationAt(machine.PC);
+            var memory = machine.Memory.SpanAt(machine.PC);
             var instruction = decoder.Decode(memory);
             instruction.Execute(memory);
 
@@ -38,7 +38,7 @@ namespace ZMacBlazor.Tests.ZMachine
             Assert.Equal(3, instruction.Operands.Count);
             Assert.Equal(0x5479, machine.PC);
 
-            memory = machine.Memory.LocationAt(machine.PC);
+            memory = machine.Memory.SpanAt(machine.PC);
             instruction = decoder.Decode(memory);
             instruction.Execute(memory);
 
@@ -49,7 +49,7 @@ namespace ZMacBlazor.Tests.ZMachine
             Assert.Equal(OperandType.Variable, instruction.Operands[1].Type);
             Assert.Equal(1, instruction.Operands[1].RawValue);
 
-            memory = machine.Memory.LocationAt(machine.PC);
+            memory = machine.Memory.SpanAt(machine.PC);
             instruction = decoder.Decode(memory);
             instruction.Execute(memory);
 

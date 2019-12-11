@@ -60,7 +60,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             this.machine = machine;
         }
 
-        public Instruction Decode(MemoryLocation memory)
+        public Instruction Decode(SpanLocation memory)
         {
             var instruction = memory.Bytes[0] switch
             {
@@ -73,13 +73,13 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             return instruction;
         }
 
-        private Instruction DecodeExt(MemoryLocation memory)
+        private Instruction DecodeExt(SpanLocation memory)
         {
             var opcode = memory.Bytes[1];
             return CreateExtInstruction(opcode);
         }
 
-        private Instruction DecodeShort(MemoryLocation memory)
+        private Instruction DecodeShort(SpanLocation memory)
         {
             var opcode = Bits.BottomFour(memory.Bytes[0]);
 
@@ -93,12 +93,12 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             }
         }
 
-        private Instruction DecodeLong(MemoryLocation memory)
+        private Instruction DecodeLong(SpanLocation memory)
         {
             return new Op2Instruction(machine);
         }
 
-        private Instruction DecodeVar(MemoryLocation memory)
+        private Instruction DecodeVar(SpanLocation memory)
         {
             if (Bits.FiveSet(memory.Bytes[0]))
             {

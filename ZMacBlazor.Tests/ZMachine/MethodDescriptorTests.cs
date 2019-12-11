@@ -18,7 +18,7 @@ namespace ZMacBlazor.Tests.ZMachine
             var machine = new Machine(logger);
             machine.Load(file);
 
-            var memory = machine.Memory.LocationAt(0x5472);
+            var memory = machine.Memory.SpanAt(0x5472);
             var descriptor = new MethodDescriptor(memory, machine);
 
             Assert.Equal(3, descriptor.LocalsCount);

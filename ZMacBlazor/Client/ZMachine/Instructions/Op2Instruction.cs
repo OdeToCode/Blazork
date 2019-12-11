@@ -13,7 +13,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             branchResolver = new BranchResolver();
         }
 
-        public override void Execute(MemoryLocation memory)
+        public override void Execute(SpanLocation memory)
         {
             operandResolver.AddOperands(Operands, memory.Bytes);
 
@@ -28,7 +28,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             };
             if (Operation.HasBranch)
             {
-                var branchData = Machine.Memory.LocationAt(memory.Address + Size);
+                var branchData = Machine.Memory.SpanAt(memory.Address + Size);
                 Branch = branchResolver.ResolveBranch(branchData);
                 Size += Branch.Size;
             }
@@ -42,7 +42,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Operation.Execute(memory);
         }
 
-        public void LoadW(MemoryLocation location)
+        public void LoadW(SpanLocation location)
         {
             var baseArray = Operands[0].Value;
             var index = Operands[1].Value;
@@ -53,7 +53,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Machine.SetPC(location.Address + Size);
         }
 
-        public void Add(MemoryLocation memory)
+        public void Add(SpanLocation memory)
         {
             var a = Operands[0].Value;
             var b = Operands[1].Value;
@@ -63,7 +63,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Machine.SetPC(memory.Address + Size);
         }
         
-        public void JE(MemoryLocation location)
+        public void JE(SpanLocation location)
         {
             var a = Operands[0].Value;
             var b = Operands[1].Value;

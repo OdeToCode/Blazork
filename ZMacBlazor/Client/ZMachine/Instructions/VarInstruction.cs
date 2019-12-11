@@ -9,7 +9,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             operandResolver = new VarOperandResolver();
         }
 
-        public override void Execute(MemoryLocation memory)
+        public override void Execute(SpanLocation memory)
         {
             operandResolver.AddOperands(Operands, memory.Bytes.Slice(1));
 
@@ -37,7 +37,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Operation.Execute(memory);
         }
 
-        public void PutProp(MemoryLocation location)
+        public void PutProp(SpanLocation location)
         {
             // Writes the given value to the given property of the given object.If the property 
             // does not exist for that object, the interpreter should halt with a suitable error message.
@@ -52,13 +52,13 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             //   e3 57 9c 06 04          PUT_PROP        "magic boat",#06,#04
         }
 
-        public void StoreW(MemoryLocation location)
+        public void StoreW(SpanLocation location)
         {
             var baseArray = Operands[0].Value;
             var index = Operands[1].Value;
             var arrayLocation = baseArray + (2 * index);
             
-            var entry = Machine.Memory.LocationAt(arrayLocation, 2);
+            var entry = Machine.Memory.SpanAt(arrayLocation, 2);
             var value = Operands[2].Value;
             
 
@@ -66,10 +66,10 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Machine.SetPC(location.Address + Size);
         }
 
-        public void Call(MemoryLocation memory)
+        public void Call(SpanLocation memory)
         {
             var callAddress = Machine.Memory.Unpack(Operands[0].Value);
-            var methodMemory = Machine.Memory.LocationAt(callAddress);
+            var methodMemory = Machine.Memory.SpanAt(callAddress);
             var method = new MethodDescriptor(methodMemory, Machine);
 
             

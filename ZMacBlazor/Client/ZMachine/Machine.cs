@@ -31,7 +31,7 @@ namespace ZMacBlazor.Client.ZMachine
             var i = 2000;
             while(--i > 0)
             {
-                var memory = Memory.LocationAt(PC);
+                var memory = Memory.SpanAt(PC);
                 var instruction = Decoder.Decode(memory);
                 instruction.Execute(memory);
             }
@@ -66,11 +66,6 @@ namespace ZMacBlazor.Client.ZMachine
 
         public int ReadVariable(int variableNumber)
         {
-            // • 0: the top of the routine stack;
-            // • 1 - 15: the local variable with that number;
-            // • 16 - 255: the global variable with that number minus 16.
-            //   globals are 0-239 (240 words starting $0C)
-
             if (variableNumber == 0)
             {
                 return StackFrames.RoutineStack.Pop();
