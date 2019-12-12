@@ -21,6 +21,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Operation = OpCode switch
             {
                 0x02 => new Operation(nameof(Print), Print, hasText: true),
+                0x0B => new Operation(nameof(NewLine), NewLine),
                 _ => throw new InvalidOperationException($"Unknown OP0 opcode {OpCode:X}")
             };
 
@@ -44,6 +45,12 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void NewLine(SpanLocation memory)
+        {
+            machine.Output.Write(Environment.NewLine);
+            machine.SetPC(memory.Address + Size);
         }
 
         public void Print(SpanLocation memory)
