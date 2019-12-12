@@ -58,9 +58,9 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             }
 
             gameProperty.SetValue(Operands[2].Value);
-            
-            machine.SetPC(location.Address + Size);
+
             DumpToLog(location);
+            machine.SetPC(location.Address + Size);
         }
 
         public void StoreW(SpanLocation location)

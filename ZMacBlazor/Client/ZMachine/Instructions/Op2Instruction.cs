@@ -22,6 +22,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Operation = OpCode switch
             {
                 0x01 => new Operation(nameof(JE), JE, hasBranch: true),
+                0x0A => new Operation(nameof(TestAttr), TestAttr, hasBranch: true),
                 0x0F => new Operation(nameof(LoadW), LoadW, hasStore: true),
                 0x14 => new Operation(nameof(Add), Add, hasStore: true),
                 0x0D => new Operation(nameof(StoreB), StoreB),
@@ -41,6 +42,19 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void TestAttr(SpanLocation location)
+        {
+            var objectNumber = Operands[0].Value;
+            var gameObject = machine.ObjectTable.GameObjects[objectNumber - 1];
+            var attributeNumber = Operands[1].Value;
+            var result = gameObject.ReadAttribute(attributeNumber);
+            
+            Branch.Go(result, machine, Size, location);
+
+            DumpToLog(location);
+            Operation.Execute(location);
         }
 
         public void StoreB(SpanLocation location)

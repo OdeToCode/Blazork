@@ -17,7 +17,7 @@
 
     public class BranchResolver
     {
-        public Branch ResolveBranch(SpanLocation memory)
+        public BranchDescriptor ResolveBranch(SpanLocation memory)
         {
             var branchOnTrue = Bits.SevenSet(memory.Bytes[0]);
             var oneByteOffset = Bits.SixSet(memory.Bytes[0]);
@@ -32,7 +32,7 @@
                 offset = Bits.MakeWordFromBottomFourteen(memory.Bytes);
             }
 
-            return new Branch(branchOnTrue, offset, oneByteOffset ? 1 : 2);
+            return new BranchDescriptor(branchOnTrue, offset, oneByteOffset ? 1 : 2);
         }
     }
 }
