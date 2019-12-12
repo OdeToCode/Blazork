@@ -24,6 +24,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 0x01 => new Operation(nameof(JE), JE, hasBranch: true),
                 0x0A => new Operation(nameof(TestAttr), TestAttr, hasBranch: true),
                 0x0F => new Operation(nameof(LoadW), LoadW, hasStore: true),
+                0x09 => new Operation(nameof(And), And, hasStore: true),
                 0x10 => new Operation(nameof(LoadB), LoadB, hasStore: true),
                 0x14 => new Operation(nameof(Add), Add, hasStore: true),
                 0x0D => new Operation(nameof(StoreB), StoreB),
@@ -55,6 +56,16 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Branch.Go(result, machine, Size, location);
         }
 
+        public void And(SpanLocation location)
+        {
+            var a = Operands[0].Value;
+            var b = Operands[1].Value;
+            var result = a & b;
+
+            machine.SetVariable(StoreResult, result);
+            machine.SetPC(location.Address + Size);
+        }
+
         public void StoreB(SpanLocation location)
         {
             if (Operands[0].Type != OperandType.Small)
@@ -64,8 +75,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             var variable = Operands[0].Value;
             var value = Operands[1].Value;
+            
             machine.SetVariable(variable, value);
-
             machine.SetPC(location.Address + Size);
         }
 
