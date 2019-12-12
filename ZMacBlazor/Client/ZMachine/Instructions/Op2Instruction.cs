@@ -24,6 +24,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 0x01 => new Operation(nameof(JE), JE, hasBranch: true),
                 0x0A => new Operation(nameof(TestAttr), TestAttr, hasBranch: true),
                 0x0F => new Operation(nameof(LoadW), LoadW, hasStore: true),
+                0x10 => new Operation(nameof(LoadB), LoadB, hasStore: true),
                 0x14 => new Operation(nameof(Add), Add, hasStore: true),
                 0x0D => new Operation(nameof(StoreB), StoreB),
                 _ => throw new InvalidOperationException($"Unknown OP2 opcode {OpCode:X}")
@@ -68,11 +69,22 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             machine.SetPC(location.Address + Size);
         }
 
+        public void LoadB(SpanLocation location)
+        {
+            var baseArray = Operands[0].Value;
+            var index = Operands[1].Value;
+            var arrayLocation = baseArray + index;
+            var value = machine.Memory.ByteAt(arrayLocation);
+
+            machine.SetVariable(StoreResult, value);
+            machine.SetPC(location.Address + Size);
+        }
+
         public void LoadW(SpanLocation location)
         {
             var baseArray = Operands[0].Value;
             var index = Operands[1].Value;
-            var arrayLocation = baseArray + 2 * index;
+            var arrayLocation = baseArray + (2 * index);
             var word = machine.Memory.WordAt(arrayLocation);
 
             machine.SetVariable(StoreResult, word);
