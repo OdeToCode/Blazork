@@ -53,7 +53,7 @@ namespace ZMacBlazor.Client.ZMachine.Text
             }
         }
 
-        public DecodingResult Decode(ReadOnlySpan<byte> bytes)
+        public DecodedString Decode(ReadOnlySpan<byte> bytes)
         {
             var position = 0;
             bool end = false;
@@ -82,7 +82,7 @@ namespace ZMacBlazor.Client.ZMachine.Text
                 position += 2;
             }
 
-            return new DecodingResult
+            return new DecodedString
             {
                 Text = builder.ToString(),
                 BytesConsumed = position

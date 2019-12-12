@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using ZMacBlazor.Client.ZMachine.Instructions;
 using ZMacBlazor.Client.ZMachine.Objects;
+using ZMacBlazor.Client.ZMachine.Streams;
 
 namespace ZMacBlazor.Client.ZMachine
 {
@@ -14,6 +15,7 @@ namespace ZMacBlazor.Client.ZMachine
             StackFrames = new FrameCollection(this);
             ObjectTable = new GameObjectTable(this);
             Decoder = new InstructionDecoder(this);
+            Output = new CompositeOutputStream(new DebugOutputStream(logger));
             Logger = logger;
         }
 
@@ -96,6 +98,7 @@ namespace ZMacBlazor.Client.ZMachine
         public InstructionDecoder Decoder { get; protected set; }
         public MachineMemory Memory { get; protected set; }
         public FrameCollection StackFrames { get; protected set; }
+        public CompositeOutputStream Output { get; }
         public ILogger Logger { get; }
     }
 }

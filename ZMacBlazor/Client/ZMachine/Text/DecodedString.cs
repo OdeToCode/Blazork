@@ -1,8 +1,8 @@
 ﻿namespace ZMacBlazor.Client.ZMachine.Text
 {
-    public class DecodingResult
+    public class DecodedString
     {
-        public DecodingResult()
+        public DecodedString()
         {
             Text = "";
         }

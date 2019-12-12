@@ -1,43 +1,55 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace ZMacBlazor.Client.ZMachine.Instructions
 {
     public class Op0Instruction : Instruction
     {
+        private readonly TextResolver textResolver;
+        private readonly BranchResolver branchResolver;
+
         public Op0Instruction(Machine machine) : base(machine)
         {
+            textResolver = new TextResolver(machine);
+            branchResolver = new BranchResolver();
         }
 
         public override void Execute(SpanLocation memory)
         {
-            //operandResolver.AddOperands(Operands, memory.Bytes);
-
-            //Size = 1 + Operands.Size;
-            //OpCode = Bits.BottomFour(memory.Bytes[0]);
+            Size = 1;
+            OpCode = Bits.BottomFour(memory.Bytes[0]);
             Operation = OpCode switch
             {
-                0x02 => new Operation(nameof(Print), Print),
+                0x02 => new Operation(nameof(Print), Print, hasText: true),
                 _ => throw new InvalidOperationException($"Unknown OP0 opcode {OpCode:X}")
             };
-            //if (Operation.HasBranch)
-            //{
-            //    var branchData = machine.Memory.SpanAt(memory.Address + Size);
-            //    Branch = branchResolver.ResolveBranch(branchData);
-            //    Size += Branch.Size;
-            //}
-            //if (Operation.HasStore)
-            //{
-            //    StoreResult = memory.Bytes[Size];
-            //    Size += 1;
-            //}
 
-            //DumpToLog(memory);
-            //Operation.Execute(memory);
+            if(Operation.HasText)
+            {
+                var decoded = textResolver.Decode(memory.Bytes.Slice(1));
+                Size += decoded.BytesConsumed;
+                Text = decoded.Text;
+            }
+            if (Operation.HasBranch)
+            {
+                var branchData = machine.Memory.SpanAt(memory.Address + Size);
+                Branch = branchResolver.ResolveBranch(branchData);
+                Size += Branch.Size;
+            }
+            if (Operation.HasStore)
+            {
+                StoreResult = memory.Bytes[Size];
+                Size += 1;
+            }
+
+            DumpToLog(memory);
+            Operation.Execute(memory);
         }
 
         public void Print(SpanLocation memory)
         {
-
+            machine.Output.Write(Text);
+            machine.SetPC(memory.Address + Size);
         }
     }
 }

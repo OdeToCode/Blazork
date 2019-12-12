@@ -6,6 +6,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
     {
         public void AddOperands(OperandCollection operands, ReadOnlySpan<byte> bytes)
         {
+            if (operands == null) throw new ArgumentNullException(nameof(operands));
+
             var byteOffset = 1;
             var operandTypes = Bits.BreakIntoTwos(bytes[0]);
 

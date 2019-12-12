@@ -7,6 +7,12 @@ namespace ZMacBlazor.Client
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            if (services is null)
+            {
+                throw new System.ArgumentNullException(nameof(services));
+            }
+
+            services.BuildServiceProvider();
         }
 
         public void Configure(IComponentsApplicationBuilder app)

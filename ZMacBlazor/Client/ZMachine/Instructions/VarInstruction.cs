@@ -24,8 +24,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             };
             if (Operation.HasBranch)
             {
-                throw new NotImplementedException("Do this");
                 Size += Branch.Size;
+                throw new NotImplementedException("Do this");
             }
             if(Operation.HasStore)
             {

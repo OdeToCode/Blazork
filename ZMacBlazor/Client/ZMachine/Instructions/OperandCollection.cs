@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -36,6 +37,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
         public void Add(Operand item)
         {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+
             Add(item.Type, item.Value);
         }
 

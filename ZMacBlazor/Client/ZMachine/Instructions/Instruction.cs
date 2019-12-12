@@ -13,6 +13,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Operation = EmptyOperation;
             StoreResult = int.MinValue;
             Branch = BranchDescriptor.NullBranch;
+            Text = "";
             Size = 0;
         }
 
@@ -47,6 +48,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         public OperandCollection Operands { get; }
         public Operation Operation { get; protected set; }
         public BranchDescriptor Branch { get; set; }
+        public string Text { get; set; }
         public byte OpCode { get; protected set; }
         public int StoreResult { get; set; }
         public int Size { get; set; }
