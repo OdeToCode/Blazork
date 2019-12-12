@@ -11,7 +11,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             this.machine = machine;
             Operands = new OperandCollection(machine);
             Operation = EmptyOperation;
-            Store = int.MinValue;
+            StoreResult = int.MinValue;
             Branch = Branch.NullBranch;
             Size = 0;
         }
@@ -31,9 +31,9 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             sb.AppendLine($"{Operation.Name}");
             sb.AppendLine($"\tSize: {Size}");
             sb.AppendLine($"\t{Operands.ToString()}");
-            if(Store >= 0)
+            if(StoreResult >= 0)
             {
-                sb.AppendLine($"\tStore:{Store}");
+                sb.AppendLine($"\tStore:{StoreResult}");
             }
             if(Branch != Branch.NullBranch)
             {
@@ -48,7 +48,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         public Operation Operation { get; protected set; }
         public Branch Branch { get; set; }
         public byte OpCode { get; protected set; }
-        public int Store { get; set; }
+        public int StoreResult { get; set; }
         public int Size { get; set; }
 
         readonly protected Machine machine;

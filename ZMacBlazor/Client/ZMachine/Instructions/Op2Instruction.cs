@@ -34,7 +34,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             }
             if (Operation.HasStore)
             {
-                Store = memory.Bytes[Size];
+                StoreResult = memory.Bytes[Size];
                 Size += 1;
             }
 
@@ -49,7 +49,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var arrayLocation = baseArray + 2 * index;
             var word = machine.Memory.WordAt(arrayLocation);
 
-            machine.SetWordVariable(Store, word);
+            machine.SetWordVariable(StoreResult, word);
             machine.SetPC(location.Address + Size);
         }
 
@@ -59,7 +59,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var b = Operands[1].Value;
             var result = a + b;
 
-            machine.SetWordVariable(Store, result);
+            machine.SetWordVariable(StoreResult, result);
             machine.SetPC(memory.Address + Size);
         }
         

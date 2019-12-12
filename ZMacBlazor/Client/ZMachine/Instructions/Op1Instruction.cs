@@ -36,7 +36,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             }
             if (Operation.HasStore)
             {
-                Store = memory.Bytes[Size];
+                StoreResult = memory.Bytes[Size];
                 Size += 1;
             }
 

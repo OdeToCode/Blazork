@@ -20,6 +20,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 0x00 => new Operation(nameof(Call), Call, hasStore: true),
                 0x01 => new Operation(nameof(StoreW), StoreW),
                 0x03 => new Operation(nameof(PutProp), PutProp),
+                0x0D => new Operation(nameof(StoreB), StoreB),
                 _ => throw new InvalidOperationException($"Unknown VAR opcode {OpCode:X}")
             };
             if (Operation.HasBranch)
@@ -29,12 +30,27 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             }
             if(Operation.HasStore)
             {
-                Store = memory.Bytes[Size];
+                StoreResult = memory.Bytes[Size];
                 Size += 1;
             }
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void StoreB(SpanLocation location)
+        {
+            if(Operands[0].Type != OperandType.Small)
+            {
+                throw new NotImplementedException("Need to rethink what this means!");
+            }
+
+            var variable = Operands[0].Value;
+            var value = Operands[1].Value;
+            machine.SetByteVariable(variable, value);
+
+            machine.SetPC(location.Address + Size);
+            DumpToLog(location);
         }
 
         public void PutProp(SpanLocation location)
@@ -46,9 +62,6 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             // results in the property value 255.) As with get_prop the property length must not be more 
             // than 2: if it is, the behaviour of the opcode is undefined.
 
-            //Set property prop on object obj to a. The property must be present on the object.If the
-            // property length is 1, then a must be byte-valued.
-
             var objectNumber = Operands[0].Value;
             var gameObject = machine.ObjectTable.GameObjects[objectNumber - 1];
 
@@ -59,15 +72,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             {
                 throw new InvalidOperationException("Illegal to PutProp on a property larger than 2 bytes");
             }
-            else if(gameProperty.Value.Length == 1)
-            {
-                gameProperty.Value.Span[0] = (byte)(Operands[2].Value & 0x00FF);
-            }
-            else
-            {
-                gameProperty.Value.Span[0] = (byte)((Operands[2].Value & 0xFF00) >> 8);
-                gameProperty.Value.Span[1] = (byte)(Operands[2].Value & 0x00FF);
-            }
+
+            gameProperty.SetValue(Operands[2].Value);
             
             machine.SetPC(location.Address + Size);
             DumpToLog(location);
@@ -95,7 +101,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             
             var newFrame = new StackFrame(memory.Address + Size,
-                                          method.LocalsCount, Store);
+                                          method.LocalsCount, StoreResult);
             machine.StackFrames.PushFrame(newFrame);
             
             for(var i = 1; i < Operands.Count; i++)

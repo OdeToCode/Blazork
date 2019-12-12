@@ -41,10 +41,27 @@ namespace ZMacBlazor.Client.ZMachine.Objects
             }
         }
 
+        public void SetValue(int value)
+        {
+            if (Value.Length == 1)
+            {
+                Value.Span[0] = (byte)(value & 0x00FF);
+            }
+            else if(Value.Length == 2)
+            {
+                Value.Span[0] = (byte)((value & 0xFF00) >> 8);
+                Value.Span[1] = (byte)(value & 0x00FF);
+            }
+            else
+            {
+                throw new InvalidOperationException("Work on this");
+            }
+
+        }
+
         private readonly Machine machine;
         public int Number { get; }
         public Memory<byte> Value { get; set; }
         public int Size { get; set; }
-
     }
 }
