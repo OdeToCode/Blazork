@@ -24,6 +24,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 0x01 => new Operation(nameof(JE), JE, hasBranch: true),
                 0x0F => new Operation(nameof(LoadW), LoadW, hasStore: true),
                 0x14 => new Operation(nameof(Add), Add, hasStore: true),
+                0x0D => new Operation(nameof(StoreB), StoreB),
                 _ => throw new InvalidOperationException($"Unknown OP2 opcode {OpCode:X}")
             };
             if (Operation.HasBranch)
@@ -40,6 +41,21 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void StoreB(SpanLocation location)
+        {
+            if (Operands[0].Type != OperandType.Small)
+            {
+                throw new NotImplementedException("Need to rethink what this means!");
+            }
+
+            var variable = Operands[0].Value;
+            var value = Operands[1].Value;
+            machine.SetByteVariable(variable, value);
+
+            machine.SetPC(location.Address + Size);
+            DumpToLog(location);
         }
 
         public void LoadW(SpanLocation location)
