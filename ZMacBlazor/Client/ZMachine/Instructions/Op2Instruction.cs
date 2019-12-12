@@ -50,11 +50,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var gameObject = machine.ObjectTable.GameObjects[objectNumber - 1];
             var attributeNumber = Operands[1].Value;
             var result = gameObject.ReadAttribute(attributeNumber);
-            
-            Branch.Go(result, machine, Size, location);
 
-            DumpToLog(location);
-            Operation.Execute(location);
+            Branch.Go(result, machine, Size, location);
         }
 
         public void StoreB(SpanLocation location)
@@ -66,10 +63,9 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             var variable = Operands[0].Value;
             var value = Operands[1].Value;
-            machine.SetByteVariable(variable, value);
+            machine.SetVariable(variable, value);
 
             machine.SetPC(location.Address + Size);
-            DumpToLog(location);
         }
 
         public void LoadW(SpanLocation location)
@@ -79,7 +75,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var arrayLocation = baseArray + 2 * index;
             var word = machine.Memory.WordAt(arrayLocation);
 
-            machine.SetWordVariable(StoreResult, word);
+            machine.SetVariable(StoreResult, word);
             machine.SetPC(location.Address + Size);
         }
 
@@ -89,7 +85,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var b = Operands[1].Value;
             var result = a + b;
 
-            machine.SetWordVariable(StoreResult, result);
+            machine.SetVariable(StoreResult, result);
             machine.SetPC(memory.Address + Size);
         }
         

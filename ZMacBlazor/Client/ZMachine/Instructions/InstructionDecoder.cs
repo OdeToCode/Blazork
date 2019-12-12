@@ -81,11 +81,9 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
         private Instruction DecodeShort(SpanLocation memory)
         {
-            var opcode = Bits.BottomFour(memory.Bytes[0]);
-
             if (Bits.FourFiveSet(memory.Bytes[0]))
             {
-                return CreateOp0Instruction(opcode);
+                return new Op0Instruction(machine);
             }
             else
             {
@@ -93,7 +91,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             }
         }
 
-        private Instruction DecodeLong(SpanLocation memory)
+        private Instruction DecodeLong(SpanLocation _)
         {
             return new Op2Instruction(machine);
         }
@@ -108,14 +106,6 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             {
                 return new Op2Instruction(machine);
             }
-        }
-
-        private Instruction CreateOp0Instruction(byte opcode)
-        {
-            return opcode switch
-            {
-                _ => throw new InvalidOperationException($"Unknown OP0 opcode {opcode:X}")
-            };
         }
 
         private Instruction CreateExtInstruction(byte opcode)

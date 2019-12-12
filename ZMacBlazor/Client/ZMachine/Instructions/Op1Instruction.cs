@@ -49,7 +49,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var returnValue = Operands[0].Value;
             var frame = machine.StackFrames.PopFrame();
 
-            machine.SetWordVariable(frame.StoreVariable, returnValue);
+            machine.SetVariable(frame.StoreVariable, returnValue);
             machine.SetPC(frame.ReturnPC);
         }
 

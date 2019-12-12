@@ -37,24 +37,7 @@ namespace ZMacBlazor.Client.ZMachine
             }
         }
 
-        public void SetByteVariable(int variableNumber, int value)
-        {
-            if(variableNumber <= 15)
-            {
-                SetWordVariable(variableNumber, value);
-            }
-            else if(variableNumber <= 255)
-            {
-                var address = (variableNumber - 16) * 2;
-                Memory.Globals[address] = (byte)(value & 0x00FF);
-            }
-            else
-            {
-                throw new InvalidOperationException($"Illegal variable number {variableNumber}");
-            }
-        }
-
-        public void SetWordVariable(int variableNumber, int value)
+        public void SetVariable(int variableNumber, int value)
         {
             if (variableNumber == 0)
             {

@@ -18,7 +18,7 @@ namespace ZMacBlazor.Tests.ZMachine
 
             var decoder = new ZStringDecoder(machine);
 
-            Assert.Equal("pair of hands", decoder.Decode(machine.Memory.SpanAt(0xBB9).Bytes));
+            Assert.Equal("pair of hands", decoder.Decode(machine.Memory.SpanAt(0xBB9).Bytes).Text);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace ZMacBlazor.Tests.ZMachine
             var machine = new Machine(logger);
             machine.Load(file);
 
-            machine.SetWordVariable(20, 0xBEEF);
+            machine.SetVariable(20, 0xBEEF);
 
             Assert.Equal(0xBEEF, machine.ReadVariable(20));
         }

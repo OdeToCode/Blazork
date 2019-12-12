@@ -6,19 +6,14 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
     public class Operation
     {
-        public Operation(string name, OperationDelegate method, bool hasBranch = false, bool hasStore = false)
+        public Operation(string name, OperationDelegate method, 
+                         bool hasBranch = false, bool hasStore = false, bool hasText = false)
         {
             Name = name;
             Method = method;
             HasBranch = hasBranch;
             HasStore = hasStore;
-
-        }
-
-        public void Deconstruct(out string name, out OperationDelegate method)
-        {
-            name = Name;
-            method = Method;
+            HasText = hasText;
         }
 
         public void Execute(SpanLocation location)
@@ -26,9 +21,10 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Method(location);
         }
 
-        public bool HasBranch { get; set; }
-        public bool HasStore { get; set; }
-        public string Name { get; set; }
+        public bool HasBranch { get; }
+        public bool HasStore { get; }
+        public bool HasText { get; }
+        public string Name { get; }
         public OperationDelegate Method { get; set; }
     }
 }

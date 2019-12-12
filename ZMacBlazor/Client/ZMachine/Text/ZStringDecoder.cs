@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace ZMacBlazor.Client.ZMachine.Text
 {
@@ -52,12 +53,11 @@ namespace ZMacBlazor.Client.ZMachine.Text
             }
         }
 
-        public string Decode(ReadOnlySpan<byte> bytes)
+        public DecodingResult Decode(ReadOnlySpan<byte> bytes)
         {
-            var failSafe = 0;
             var position = 0;
             bool end = false;
-            var result = new ZString();
+            var builder = new StringBuilder();
             
             while (!end)
             {
@@ -71,22 +71,22 @@ namespace ZMacBlazor.Client.ZMachine.Text
 
                     if (letter.HasValue)
                     {
-                        result.Append(letter.Value);
+                        builder.Append(letter.Value);
                     }
                     else if (abbreviation != null)
                     {
-                        result.Append(abbreviation);
+                        builder.Append(abbreviation);
                     }
                 }
 
                 position += 2;
-                if(++failSafe > 1024)
-                {
-                    throw new InvalidOperationException("Probably in an infinite loop trying to decode");
-                }
             }
 
-            return result.ToString();
+            return new DecodingResult
+            {
+                Text = builder.ToString(),
+                BytesConsumed = position
+            };
         }
 
         // In Versions 3 and later, Z-characters 1, 2 and 3 represent abbreviations, 
@@ -102,7 +102,7 @@ namespace ZMacBlazor.Client.ZMachine.Text
             var abbreviationBytes = machine.Memory.SpanAt(pAbbreviation).Bytes;
 
             var result = Decode(abbreviationBytes);
-            return result;
+            return result.Text;
         }
 
         private (char? letter, string? abbreviation) Translate(int value)

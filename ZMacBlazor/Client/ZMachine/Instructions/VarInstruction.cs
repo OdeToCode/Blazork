@@ -90,7 +90,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             
             for(var i = 1; i < Operands.Count; i++)
             {
-                machine.SetWordVariable(i, Operands[i].Value);
+                machine.SetVariable(i, Operands[i].Value);
             }
 
             machine.SetPC(callAddress + method.HeaderSize);
