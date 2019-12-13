@@ -30,6 +30,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 0x10 => new Operation(nameof(LoadB), LoadB, hasStore: true),
                 0x14 => new Operation(nameof(Add), Add, hasStore: true),
                 0x0D => new Operation(nameof(StoreB), StoreB),
+                0x0E => new Operation(nameof(InsertObj), InsertObj),
                 _ => throw new InvalidOperationException($"Unknown OP2 opcode {OpCode:X}")
             };
 
@@ -67,6 +68,15 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void InsertObj(SpanLocation location)
+        {
+            var target = Operands[0].Value;
+            var destination = Operands[1].Value;
+
+            machine.ObjectTable.InsertObject(target, destination);
+            machine.SetPC(location.Address + Size);
         }
 
         public void IncChk(SpanLocation location)

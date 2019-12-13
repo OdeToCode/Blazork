@@ -40,6 +40,12 @@ namespace ZMacBlazor.Client.ZMachine.Objects
             return GameObjects[number - 1];
         }
 
+        public void InsertObject(int target, int destination)
+        {
+            RemoveFromParent(target);
+            AddToParent(target, destination);
+        }
+
         public void AddToParent(int childNumber, int parentNumber)
         {
             var child = GameObjects[childNumber - 1];
@@ -53,24 +59,33 @@ namespace ZMacBlazor.Client.ZMachine.Objects
 
         public void RemoveFromParent(int targetNumber)
         {
-            var target = GameObjects[targetNumber - 1];
-            var parent = GameObjects[target.Parent - 1];
-
-            target.Parent = 0;
-            if(parent.Child == targetNumber)
+            if (targetNumber < 1 || targetNumber > GameObjects.Count - 1)
             {
-                parent.Child = target.Sibling;
+                throw new ArgumentException($"Target is {targetNumber} but must be in the range 1 to {GameObjects.Count}", 
+                                            nameof(targetNumber));
             }
-            else
+            
+            var target = GameObjects[targetNumber - 1];
+            if (target.Parent != 0)
             {
-                var index = parent.Child;
-                while(index != 0)
+                var parent = GameObjects[target.Parent - 1];
+                target.Parent = 0;
+                
+                if (parent.Child == targetNumber)
                 {
-                    var node = GameObjects[index -1];
-                    if(node.Sibling == targetNumber)
+                    parent.Child = target.Sibling;
+                }
+                else
+                {
+                    var index = parent.Child;
+                    while (index != 0)
                     {
-                        node.Sibling = target.Sibling;
-                        break;
+                        var node = GameObjects[index - 1];
+                        if (node.Sibling == targetNumber)
+                        {
+                            node.Sibling = target.Sibling;
+                            break;
+                        }
                     }
                 }
             }
