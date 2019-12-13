@@ -24,6 +24,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             OpCode = Bits.BottomFour(memory.Bytes[0]);
             Operation = OpCode switch
             {
+                0x00 => new Operation(nameof(JZ), JZ, hasBranch: true),
                 0x0B => new Operation(nameof(Ret), Ret),
                 0x0C => new Operation(nameof(Jump), Jump),
                 _ => throw new InvalidOperationException($"Unknown OP1 opcode {OpCode:X}")
@@ -42,6 +43,13 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void JZ(SpanLocation location)
+        {
+            var value = Operands[0].Value;
+            var result = value == 0;
+            Branch.Go(result, machine, Size, location);
         }
 
         public void Ret(SpanLocation location)

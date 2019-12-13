@@ -12,7 +12,7 @@ namespace ZMacBlazor.Client.ZMachine
             return (b1, b2);
         }
 
-        public static byte FourAndFive(byte value)
+        public static byte FiveAndFour(byte value)
         {
             var mask = (byte)0b0011_0000;
             return (byte)((value & mask) >> 4);
@@ -75,7 +75,13 @@ namespace ZMacBlazor.Client.ZMachine
             return value;
         }
 
-        public static bool SixSevenSet(byte value)
+        public static bool FiveAndFourSet(byte value)
+        {
+            var mask = (byte)0b0011_0000;
+            return (value & mask) == mask;
+        }
+
+        public static bool SevenSixSet(byte value)
         {
             var mask = (byte)0b1100_0000;
             return (value & mask) == mask;
@@ -87,7 +93,7 @@ namespace ZMacBlazor.Client.ZMachine
             return (value & mask) == mask;
         }
 
-        public static bool FourFiveSet(byte value)
+        public static bool FiveFourSet(byte value)
         {
             var mask = (byte)0b0011_0000;
             return (value & mask) == mask;

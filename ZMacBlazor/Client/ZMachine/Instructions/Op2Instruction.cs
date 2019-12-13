@@ -4,20 +4,32 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 {
     public class Op2Instruction : Instruction
     {
-        private readonly Op2OperandResolver operandResolver;
+        private readonly Op2OperandResolver op2OperandResolver;
+        private readonly VarOperandResolver varOperandResolver;
         private readonly BranchResolver branchResolver;
 
         public Op2Instruction(Machine machine) : base(machine)
         {
-            operandResolver = new Op2OperandResolver();
+            op2OperandResolver = new Op2OperandResolver();
+            varOperandResolver = new VarOperandResolver();
             branchResolver = new BranchResolver();
         }
 
         public override void Execute(SpanLocation memory)
         {
-            operandResolver.AddOperands(Operands, memory.Bytes);
+            if (Bits.SevenSixSet(memory.Bytes[0]) == true && 
+                Bits.FiveSet(memory.Bytes[0]) == false)
+            {
+                // 😒 2OPS, but VAR operands 😒
+                varOperandResolver.AddOperands(Operands, memory.Bytes.Slice(1));
+                Size = 2 + Operands.Size;
+            }
+            else
+            {
+                op2OperandResolver.AddOperands(Operands, memory.Bytes);
+                Size = 1 + Operands.Size;
+            }
 
-            Size = 1 + Operands.Size;
             OpCode = Bits.BottomFive(memory.Bytes[0]);
             Operation = OpCode switch
             {

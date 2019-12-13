@@ -19,6 +19,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             {
                 0x00 => new Operation(nameof(Call), Call, hasStore: true),
                 0x01 => new Operation(nameof(StoreW), StoreW),
+                0x06 => new Operation(nameof(PrintNum), PrintNum),
                 0x03 => new Operation(nameof(PutProp), PutProp),
                 _ => throw new InvalidOperationException($"Unknown VAR opcode {OpCode:X}")
             };
@@ -35,6 +36,14 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void PrintNum(SpanLocation location)
+        {
+            var number = Operands[0].Value;
+            machine.Output.Write(number.ToString());
+
+            machine.SetPC(location.Address + Size);
         }
 
         public void PutProp(SpanLocation location)
@@ -59,7 +68,6 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             gameProperty.SetValue(Operands[2].Value);
 
-            DumpToLog(location);
             machine.SetPC(location.Address + Size);
         }
 
@@ -72,8 +80,6 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var entry = machine.Memory.SpanAt(arrayLocation, 2);
             var value = Operands[2].Value;
             
-
-            DumpToLog(location);
             machine.SetPC(location.Address + Size);
         }
 

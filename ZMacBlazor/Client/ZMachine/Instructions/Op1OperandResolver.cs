@@ -8,7 +8,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         {
             if (operands == null) throw new ArgumentNullException(nameof(operands));
 
-            var type = Bits.FourAndFive(bytes[0]);
+            var type = Bits.FiveAndFour(bytes[0]);
             if(type == OperandType.Small || type == OperandType.Variable)
             {
                 operands.Add(type, bytes[1]);

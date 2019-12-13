@@ -65,7 +65,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var instruction = memory.Bytes[0] switch
             {
                 0xBE => DecodeExt(memory),
-                var v when Bits.SixSevenSet(v) => DecodeVar(memory),
+                var v when Bits.SevenSixSet(v) => DecodeVar(memory),
                 var v when Bits.SevenSet(v) => DecodeShort(memory),
                 _ => DecodeLong(memory)
             };
@@ -81,7 +81,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
         private Instruction DecodeShort(SpanLocation memory)
         {
-            if (Bits.FourFiveSet(memory.Bytes[0]))
+            if (Bits.FiveFourSet(memory.Bytes[0]))
             {
                 return new Op0Instruction(machine);
             }

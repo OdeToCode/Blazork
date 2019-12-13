@@ -83,19 +83,19 @@ namespace ZMacBlazor.Tests.ZMachine
         [Fact]
         public void TopTwoTests()
         {
-            Assert.False(Bits.SixSevenSet(0b0000_0000));
-            Assert.False(Bits.SixSevenSet(0b0100_0000));
-            Assert.False(Bits.SixSevenSet(0b1000_0000));
-            Assert.True(Bits.SixSevenSet(0b1100_0000));
+            Assert.False(Bits.SevenSixSet(0b0000_0000));
+            Assert.False(Bits.SevenSixSet(0b0100_0000));
+            Assert.False(Bits.SevenSixSet(0b1000_0000));
+            Assert.True(Bits.SevenSixSet(0b1100_0000));
         }
 
         [Fact]
         public void FourFiveTests()
         {
-            Assert.False(Bits.FourFiveSet(0b0000_0000));
-            Assert.False(Bits.FourFiveSet(0b0010_0000));
-            Assert.False(Bits.FourFiveSet(0b0001_0000));
-            Assert.True(Bits.FourFiveSet(0b0011_0000));
+            Assert.False(Bits.FiveFourSet(0b0000_0000));
+            Assert.False(Bits.FiveFourSet(0b0010_0000));
+            Assert.False(Bits.FiveFourSet(0b0001_0000));
+            Assert.True(Bits.FiveFourSet(0b0011_0000));
         }
     }
 }
