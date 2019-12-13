@@ -20,6 +20,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             OpCode = Bits.BottomFour(memory.Bytes[0]);
             Operation = OpCode switch
             {
+                0x00 => new Operation(nameof(RetTrue), RetTrue),
                 0x02 => new Operation(nameof(Print), Print, hasText: true),
                 0x0B => new Operation(nameof(NewLine), NewLine),
                 _ => throw new InvalidOperationException($"Unknown OP0 opcode {OpCode:X}")
@@ -45,6 +46,15 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void RetTrue(SpanLocation memory)
+        {
+            var returnValue = 1;
+            var frame = machine.StackFrames.PopFrame();
+
+            machine.SetVariable(frame.StoreVariable, returnValue);
+            machine.SetPC(frame.ReturnPC);
         }
 
         public void NewLine(SpanLocation memory)
