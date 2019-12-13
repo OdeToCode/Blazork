@@ -85,7 +85,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         public void TestAttr(SpanLocation location)
         {
             var objectNumber = Operands[0].Value;
-            var gameObject = machine.ObjectTable.GameObjects[objectNumber - 1];
+            var gameObject = machine.ObjectTable.GetObject(objectNumber);
             var attributeNumber = Operands[1].Value;
             var result = gameObject.ReadAttribute(attributeNumber);
 

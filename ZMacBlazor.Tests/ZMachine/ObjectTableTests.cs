@@ -9,6 +9,78 @@ namespace ZMacBlazor.Tests.ZMachine
     public class ObjectTableTests
     {
         [Fact]
+        public void CanRemoveObjectFromParent()
+        {
+            using var file = File.OpenRead(@"Data\ZORK1.DAT");
+            using var logger = new NullLogger();
+            var machine = new Machine(logger);
+            machine.Load(file);
+
+            var o249 = machine.ObjectTable.GetObject(249);
+            var o250 = machine.ObjectTable.GetObject(250);
+            
+            // 249 - 250
+            //        |
+            //        73
+
+            machine.ObjectTable.RemoveFromParent(250);
+
+            Assert.Equal(0, o250.Parent);
+            Assert.Equal(73, o249.Child);
+        }
+
+        [Fact]
+        public void CanRemoveObjectFromParentWhenNotDirectChild()
+        {
+            using var file = File.OpenRead(@"Data\ZORK1.DAT");
+            using var logger = new NullLogger();
+            var machine = new Machine(logger);
+            machine.Load(file);
+
+            var o247 = machine.ObjectTable.GetObject(247);
+            var o1 = machine.ObjectTable.GetObject(1);
+            var o248 = machine.ObjectTable.GetObject(248);
+            o1.Sibling = 33;
+            
+            // 247 -> 248
+            //         |
+            //         1
+            //         |
+            //         33
+
+            machine.ObjectTable.RemoveFromParent(1);
+
+            Assert.Equal(248, o247.Child);
+            Assert.Equal(0, o1.Parent);
+            Assert.Equal(33, o248.Sibling);
+            Assert.Equal(247, o248.Parent);
+        }
+
+        [Fact]
+        public void CanAddObjectToNewParent()
+        {
+            using var file = File.OpenRead(@"Data\ZORK1.DAT");
+            using var logger = new NullLogger();
+            var machine = new Machine(logger);
+            machine.Load(file);
+
+            // 249 - 250
+            //        |
+            //        73
+
+
+            var o249 = machine.ObjectTable.GetObject(249);
+            var o250 = machine.ObjectTable.GetObject(250);
+            var o33 = machine.ObjectTable.GetObject(33);
+            machine.ObjectTable.AddToParent(33, 249);
+
+            Assert.Equal(33, o249.Child);
+            Assert.Equal(250, o33.Sibling);
+            Assert.Equal(249, o33.Parent);
+            Assert.Equal(249, o250.Parent);
+        }
+
+        [Fact]
         public void CanLoadObjectTable()
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
@@ -16,13 +88,11 @@ namespace ZMacBlazor.Tests.ZMachine
             var machine = new Machine(logger);
             machine.Load(file);
 
-            Assert.Equal(31, machine.ObjectTable.Defaults.Length);
-            Assert.Equal(0, machine.ObjectTable.Defaults[10]);
-            Assert.Equal(0, machine.ObjectTable.Defaults[30]);
-            Assert.Equal(0, machine.ObjectTable.Defaults[0]);
-            Assert.Equal(250, machine.ObjectTable.GameObjects.Count);
+            Assert.Equal(0, machine.ObjectTable.GetDefault(10));
+            Assert.Equal(0, machine.ObjectTable.GetDefault(30));
+            Assert.Equal(0, machine.ObjectTable.GetDefault(0));
 
-            var object1 = machine.ObjectTable.GameObjects[0];
+            var object1 = machine.ObjectTable.GetObject(1);
             Assert.Equal(0xBB8, object1.PropertyPointer);
             Assert.Equal(247, object1.Parent);
             Assert.Equal(2, object1.Sibling);
@@ -37,7 +107,7 @@ namespace ZMacBlazor.Tests.ZMachine
             Assert.True(MemoryEqual(new byte[] { 0x46, 0xDC, 0x42, 0xC2, 0x42, 0xB4 }, object1.Properties[18].Value));
             Assert.True(MemoryEqual(new byte[] { 0x82 }, object1.Properties[16].Value));
 
-            var object227 = machine.ObjectTable.GameObjects[226];
+            var object227 = machine.ObjectTable.GetObject(227);
             Assert.Equal(0x205F, object227.PropertyPointer);
             Assert.True(object227.ReadAttribute(11));
             Assert.True(object227.ReadAttribute(12));
@@ -46,7 +116,7 @@ namespace ZMacBlazor.Tests.ZMachine
             Assert.True(object227.ReadAttribute(14));
             Assert.Equal("basket", object227.PropertyTable.Description);
 
-            var object250 = machine.ObjectTable.GameObjects[249];
+            var object250 = machine.ObjectTable.GetObject(250);
             Assert.Equal(249, object250.Parent);
             Assert.Equal(73, object250.Sibling);
             Assert.Equal(0, object250.Child);

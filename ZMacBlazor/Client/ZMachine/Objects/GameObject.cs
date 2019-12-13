@@ -96,9 +96,9 @@ namespace ZMacBlazor.Client.ZMachine.Objects
             }
         }
 
-        public int Parent { get; }
-        public int Sibling { get; }
-        public int Child { get; }
+        public int Parent { get; set; }
+        public int Sibling { get; set; }
+        public int Child { get; set; }
         public int PropertyPointer { get; }
         
         public string Description 

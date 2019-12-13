@@ -65,7 +65,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             // than 2: if it is, the behaviour of the opcode is undefined.
 
             var objectNumber = Operands[0].Value;
-            var gameObject = machine.ObjectTable.GameObjects[objectNumber - 1];
+            var gameObject = machine.ObjectTable.GetObject(objectNumber);
 
             var propertyNumber = Operands[1].Value;
             var gameProperty = gameObject.Properties[propertyNumber];

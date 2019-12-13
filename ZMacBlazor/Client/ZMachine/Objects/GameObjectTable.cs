@@ -25,6 +25,58 @@ namespace ZMacBlazor.Client.ZMachine.Objects
             ReadObjects();
         }
 
+        public int GetDefault(int index)
+        {
+            return Defaults[index];
+        }
+
+        public void AddObject(GameObject gameObject)
+        {
+            GameObjects.Add(gameObject);
+        }
+
+        public GameObject GetObject(int number)
+        {
+            return GameObjects[number - 1];
+        }
+
+        public void AddToParent(int childNumber, int parentNumber)
+        {
+            var child = GameObjects[childNumber - 1];
+            var parent = GameObjects[parentNumber - 1];
+
+            var existingChild = parent.Child;
+            parent.Child = childNumber;
+            child.Sibling = existingChild;
+            child.Parent = parentNumber;
+        }
+
+        public void RemoveFromParent(int targetNumber)
+        {
+            var target = GameObjects[targetNumber - 1];
+            var parent = GameObjects[target.Parent - 1];
+
+            target.Parent = 0;
+            if(parent.Child == targetNumber)
+            {
+                parent.Child = target.Sibling;
+            }
+            else
+            {
+                var index = parent.Child;
+                while(index != 0)
+                {
+                    var node = GameObjects[index -1];
+                    if(node.Sibling == targetNumber)
+                    {
+                        node.Sibling = target.Sibling;
+                        break;
+                    }
+                }
+            }
+        }
+
+
         // The largest valid object number is not directly stored anywhere in the Z-machine. 
         // Utility programs like Infodump deduce this number by assuming that, initially, 
         // the object entries end where the first property table begins.
@@ -67,7 +119,7 @@ namespace ZMacBlazor.Client.ZMachine.Objects
             }
         }
 
-        public List<GameObject> GameObjects { get; protected set; }
-        public ReadOnlySpan<int> Defaults => defaults.AsSpan();
+        protected List<GameObject> GameObjects { get; set; }
+        protected ReadOnlySpan<int> Defaults => defaults.AsSpan();
     }
 }
