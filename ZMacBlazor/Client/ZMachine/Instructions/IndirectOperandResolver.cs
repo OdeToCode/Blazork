@@ -8,15 +8,11 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         {
             if (operands == null) throw new ArgumentNullException(nameof(operands));
 
-            
+            var operandType1 = OperandType.Variable;
+            operands.Add(operandType1, bytes[0]);
 
-            var operandType1 = Bits.SixSet(bytes[0]) ?
-                                OperandType.Variable : OperandType.Small;
-            operands.Add(operandType1, bytes[1]);
-
-            var operandType2 = Bits.FiveSet(bytes[0]) ?
-                                OperandType.Variable : OperandType.Small;
-            operands.Add(operandType2, bytes[2]);
+            var operandType2 = OperandType.Small;
+            operands.Add(operandType2, bytes[1]);
         }
     }
 }

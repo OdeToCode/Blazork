@@ -41,7 +41,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 Size = 1 + Operands.Size;
             }
             else if (Bits.SevenSixSet(memory.Bytes[0]) == true && 
-                Bits.FiveSet(memory.Bytes[0]) == false)
+                     Bits.FiveSet(memory.Bytes[0]) == false)
             {
                 // 😒 2OPS, but VAR operands 😒
                 varOperandResolver.AddOperands(Operands, memory.Bytes.Slice(1));
@@ -53,7 +53,6 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 Size = 1 + Operands.Size;
             }
 
-            
             if (Operation.HasBranch)
             {
                 var branchData = machine.Memory.SpanAt(memory.Address + Size);
@@ -72,7 +71,15 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
         public void IncChk(SpanLocation location)
         {
+            // inc_chk is indirect
+            var variable = Operands[0].RawValue;
+            var value = machine.ReadVariable(variable);
+            
+            value += 1;
+            machine.SetVariable(variable, value);
 
+            var result = value > Operands[1].Value;
+            Branch.Go(result, machine, Size, location);
         }
 
         public void TestAttr(SpanLocation location)
