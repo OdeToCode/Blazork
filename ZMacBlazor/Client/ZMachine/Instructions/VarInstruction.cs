@@ -19,9 +19,10 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             {
                 0x00 => new Operation(nameof(Call), Call, hasStore: true),
                 0x01 => new Operation(nameof(StoreW), StoreW),
+                0x03 => new Operation(nameof(PutProp), PutProp),
                 0x05 => new Operation(nameof(PrintChar), PrintChar),
                 0x06 => new Operation(nameof(PrintNum), PrintNum),
-                0x03 => new Operation(nameof(PutProp), PutProp),
+                0x08 => new Operation(nameof(Push), Push),
                 _ => throw new InvalidOperationException($"Unknown VAR opcode {OpCode:X}")
             };
             if (Operation.HasBranch)
@@ -37,6 +38,13 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void Push(SpanLocation location)
+        {
+            var value = Operands[0].Value;
+            machine.StackFrames.RoutineStack.Push(value);
+            machine.SetPC(location.Address + Size);
         }
 
         public void PrintChar(SpanLocation location)
