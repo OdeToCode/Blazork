@@ -25,6 +25,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Operation = OpCode switch
             {
                 0x00 => new Operation(nameof(JZ), JZ, hasBranch: true),
+                0x0A => new Operation(nameof(PrintObj), PrintObj),
                 0x0B => new Operation(nameof(Ret), Ret),
                 0x0C => new Operation(nameof(Jump), Jump),
                 _ => throw new InvalidOperationException($"Unknown OP1 opcode {OpCode:X}")
@@ -43,6 +44,14 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void PrintObj(SpanLocation location)
+        {
+            var number = Operands[0].Value;
+            var gameObject = machine.ObjectTable.GetObject(number);
+            machine.Output.Write(gameObject.Description);
+            machine.SetPC(location.Address + Size);
         }
 
         public void JZ(SpanLocation location)
