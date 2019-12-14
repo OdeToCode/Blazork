@@ -23,6 +23,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 0x05 => new Operation(nameof(PrintChar), PrintChar),
                 0x06 => new Operation(nameof(PrintNum), PrintNum),
                 0x08 => new Operation(nameof(Push), Push),
+                0x09 => new Operation(nameof(Pull), Pull),
                 _ => throw new InvalidOperationException($"Unknown VAR opcode {OpCode:X}")
             };
             if (Operation.HasBranch)
@@ -38,6 +39,20 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void Pull(SpanLocation location)
+        {
+            if(machine.Version == 0x06)
+            {
+                throw new NotImplementedException("Could be a user stack");
+            }
+
+            // pull is really a "peek" operation
+            var value = machine.StackFrames.RoutineStack.Peek();
+            var variable = Operands[0].Value;
+            machine.SetVariable(variable, value);
+            machine.SetPC(location.Address + Size);
         }
 
         public void Push(SpanLocation location)

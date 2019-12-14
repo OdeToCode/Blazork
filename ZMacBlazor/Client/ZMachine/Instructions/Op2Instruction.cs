@@ -24,13 +24,14 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             {
                 0x01 => new Operation(nameof(JE), JE, hasBranch: true),
                 0x05 => new Operation(nameof(IncChk), IncChk, hasBranch: true),
-                0x0A => new Operation(nameof(TestAttr), TestAttr, hasBranch: true),
-                0x0F => new Operation(nameof(LoadW), LoadW, hasStore: true),
                 0x09 => new Operation(nameof(And), And, hasStore: true),
-                0x10 => new Operation(nameof(LoadB), LoadB, hasStore: true),
-                0x14 => new Operation(nameof(Add), Add, hasStore: true),
+                0x0A => new Operation(nameof(TestAttr), TestAttr, hasBranch: true),
+                0x0B => new Operation(nameof(SetAttr), SetAttr),
                 0x0D => new Operation(nameof(StoreB), StoreB),
                 0x0E => new Operation(nameof(InsertObj), InsertObj),
+                0x0F => new Operation(nameof(LoadW), LoadW, hasStore: true),
+                0x10 => new Operation(nameof(LoadB), LoadB, hasStore: true),
+                0x14 => new Operation(nameof(Add), Add, hasStore: true),
                 _ => throw new InvalidOperationException($"Unknown OP2 opcode {OpCode:X}")
             };
 
@@ -68,6 +69,14 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void SetAttr(SpanLocation location)
+        {
+            var objectNumber = Operands[0].Value;
+            var attribute = Operands[1].Value;
+            machine.ObjectTable.GetObject(objectNumber).SetAttribute(attribute, true);
+            machine.SetPC(location.Address + Size);
         }
 
         public void InsertObj(SpanLocation location)
