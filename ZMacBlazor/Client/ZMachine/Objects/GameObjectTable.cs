@@ -59,7 +59,7 @@ namespace ZMacBlazor.Client.ZMachine.Objects
 
         public void RemoveFromParent(int targetNumber)
         {
-            if (targetNumber < 1 || targetNumber > GameObjects.Count - 1)
+            if (targetNumber < 1 || targetNumber > GameObjects.Count)
             {
                 throw new ArgumentException($"Target is {targetNumber} but must be in the range 1 to {GameObjects.Count}", 
                                             nameof(targetNumber));

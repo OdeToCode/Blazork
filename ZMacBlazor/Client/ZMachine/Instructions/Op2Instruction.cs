@@ -24,6 +24,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             {
                 0x01 => new Operation(nameof(JE), JE, hasBranch: true),
                 0x05 => new Operation(nameof(IncChk), IncChk, hasBranch: true),
+                0x06 => new Operation(nameof(Jin), Jin, hasBranch: true),
                 0x09 => new Operation(nameof(And), And, hasStore: true),
                 0x0A => new Operation(nameof(TestAttr), TestAttr, hasBranch: true),
                 0x0B => new Operation(nameof(SetAttr), SetAttr),
@@ -69,6 +70,18 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void Jin(SpanLocation location)
+        {
+            // Branch if n is the parent object of obj, or if n is 0 and the object has no parent. 
+            var childNumber = Operands[0].Value;
+            var parentNumber = Operands[1].Value;
+
+            var child = machine.ObjectTable.GetObject(childNumber);
+            var result = child.Parent == parentNumber;
+
+            Branch.Go(result, machine, Size, location);
         }
 
         public void SetAttr(SpanLocation location)
