@@ -32,6 +32,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 0x0E => new Operation(nameof(InsertObj), InsertObj),
                 0x0F => new Operation(nameof(LoadW), LoadW, hasStore: true),
                 0x10 => new Operation(nameof(LoadB), LoadB, hasStore: true),
+                0x11 => new Operation(nameof(GetProp), GetProp, hasStore: true),
                 0x14 => new Operation(nameof(Add), Add, hasStore: true),
                 _ => throw new InvalidOperationException($"Unknown OP2 opcode {OpCode:X}")
             };
@@ -70,6 +71,39 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void GetProp(SpanLocation location)
+        {
+            if(DateTime.Now.Day > 25) throw new InvalidOperationException("Refactor this"); 
+
+            var objecNumber = Operands[0].Value;
+            var propertyNumber = Operands[1].Value;
+            var gameObject = machine.ObjectTable.GetObject(objecNumber);
+            if (gameObject.Properties.ContainsKey(propertyNumber))
+            {
+                var propertyValue = gameObject.Properties[propertyNumber];
+                if(propertyValue.Size == 1)
+                {
+                    machine.SetVariable(StoreResult, propertyValue.Value.Span[0]);
+                }
+                else if(propertyValue.Size == 2)
+                {
+                    machine.SetVariable(StoreResult, Bits.MakeWord(propertyValue.Value.Span));
+                }
+                else
+                {
+                    throw new InvalidOperationException($"GetProp should look for property with length of 1 or 2, not {propertyValue.Size}. Looking at prop {propertyNumber} on {objecNumber}"); ;
+                }
+            }
+            else
+            {
+                var propertyValue = machine.ObjectTable.GetDefault(propertyNumber);
+                machine.SetVariable(StoreResult, propertyValue);
+            }
+
+            machine.SetPC(location.Address + Size);
+
         }
 
         public void Jin(SpanLocation location)
