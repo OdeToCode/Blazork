@@ -61,6 +61,7 @@ namespace ZMacBlazor.Client.ZMachine.Text
             var position = 0;
             bool end = false;
             var builder = new StringBuilder();
+            state = State.A0;
             log.Verbose($"\tDecoding string from bytes {location.ToString()}");
             
             while (!end)

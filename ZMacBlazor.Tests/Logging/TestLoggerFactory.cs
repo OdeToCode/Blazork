@@ -16,9 +16,9 @@ namespace ZMacBlazor.Tests.Logging
                                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                                 .MinimumLevel.Override(typeof(FrameCollection).FullName, LogEventLevel.Warning)
                                 .MinimumLevel.Override(typeof(Machine).FullName, LogEventLevel.Warning)
-                                .MinimumLevel.Override(typeof(DebugOutputStream).FullName, LogEventLevel.Warning)
-                              //  .MinimumLevel.Override(typeof(Instruction).FullName, LogEventLevel.Warning)
-                              //  .MinimumLevel.Override(typeof(ZStringDecoder).FullName, LogEventLevel.Warning)
+                               // .MinimumLevel.Override(typeof(DebugOutputStream).FullName, LogEventLevel.Warning)
+                                .MinimumLevel.Override(typeof(Instruction).FullName, LogEventLevel.Warning)
+                                //.MinimumLevel.Override(typeof(ZStringDecoder).FullName, LogEventLevel.Warning)
                                 .Enrich.FromLogContext()
                                 .WriteTo.File(@"..\..\..\..\tests.log",
                                               outputTemplate: "{SourceContext:lj}\n{Message:lj}{NewLine}{Exception}")

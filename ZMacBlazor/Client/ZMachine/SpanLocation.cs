@@ -20,9 +20,10 @@ namespace ZMacBlazor.Client.ZMachine
         public override string ToString()
         {
             var sb = new StringBuilder();
+            sb.Append($"@{Address:X} ");
             for(var i = 0; i < 10; i++)
             {
-                sb.Append($"@{Address:X} {Bytes[i]:X} ");
+                sb.Append($"{Bytes[i]:X} ");
             }
             return sb.ToString();
         }
