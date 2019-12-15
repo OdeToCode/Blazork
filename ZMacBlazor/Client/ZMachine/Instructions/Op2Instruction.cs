@@ -75,8 +75,6 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
         public void GetProp(SpanLocation location)
         {
-            if(DateTime.Now.Day > 25) throw new InvalidOperationException("Refactor this"); 
-
             var objecNumber = Operands[0].Value;
             var propertyNumber = Operands[1].Value;
             var gameObject = machine.ObjectTable.GetObject(objecNumber);

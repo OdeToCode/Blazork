@@ -110,5 +110,17 @@ namespace ZMacBlazor.Client.ZMachine
             var mask = (byte)0b0100_0000;
             return (value & mask) == mask;
         }
+
+        public static string BreakIntoZscii(int value)
+        {
+            var result = "";
+            result += (value & 0b1000_0000) > 0 ? "1 " : "0 ";
+            for (var i = 10; i >= 0; i -= 5)
+            {
+                var fiveBit = (value >> i) & 0x1F;
+                result += Convert.ToString(fiveBit, 2).PadLeft(5, '0') + " ";
+            }
+            return result;
+        }
     }
 }

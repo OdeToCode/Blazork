@@ -61,15 +61,15 @@ namespace ZMacBlazor.Client.ZMachine.Text
             var position = 0;
             bool end = false;
             var builder = new StringBuilder();
-            state = State.A0;
             log.Verbose($"\tDecoding string from bytes {location.ToString()}");
             
             while (!end)
             {
                 var value = Bits.MakeWord(location.Bytes.Slice(position, 2));
                 end = (value & 0x8000) > 0;
-                
-                for(var i = 10; i >= 0; i -=5)
+                log.Verbose($"\tDecoding {value:X} {Bits.BreakIntoZscii(value)}");
+
+                for (var i = 10; i >= 0; i -=5)
                 {
                     var zchar = (value >> i) & 0x1F;
                     var (letter, abbreviation) = Translate(zchar);
@@ -87,6 +87,7 @@ namespace ZMacBlazor.Client.ZMachine.Text
                 position += 2;
             }
 
+            state = State.A0;
             return new DecodedString
             {
                 Text = builder.ToString(),

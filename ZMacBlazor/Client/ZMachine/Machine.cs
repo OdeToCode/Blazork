@@ -94,7 +94,7 @@ namespace ZMacBlazor.Client.ZMachine
 
         public SpanLocation GetAbbreviation(int index, int number)
         {
-            var offset = (32 * (index - 1)) + (number * 2);
+            var offset = (64 * (index - 1)) + number * 2;
             var ppAbbreviation = Memory.WordAt(Header.ABBREVIATIONS);
             var pAbbreviation = Memory.WordAddressAt(ppAbbreviation + offset);
             var location = Memory.SpanAt(pAbbreviation);

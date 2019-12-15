@@ -24,7 +24,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         {
             var sb = new StringBuilder();
             sb.Append($"\t{ToString()}");
-            sb.Append($"\t Raw: @{memory.Address:X} {memory.ToString()}");
+            sb.Append($"\t{memory.ToString()}");
 
             log.Information(sb.ToString());
         }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Xunit;
 using ZMacBlazor.Client.ZMachine;
 using ZMacBlazor.Client.ZMachine.Text;
@@ -6,9 +7,10 @@ using ZMacBlazor.Tests.Logging;
 
 namespace ZMacBlazor.Tests.ZMachine
 {
-    public class AbbreviationTests
+    [SuppressMessage("Usage", "xUnit1000:Test classes must be public")]
+    internal class AbbreviationTests
     {
-        [Fact(Skip ="Just for looking at abbreviations")]
+        [Fact]
         public void AbbreviationsMakeSense()
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");

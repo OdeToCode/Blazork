@@ -18,7 +18,6 @@ namespace ZMacBlazor.Client.ZMachine.Streams
         public void Write(string text)
         {
             logger.Information(text);
-            Debug.Write(text);
         }
     }
 }
