@@ -1,18 +1,21 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 
 namespace ZMacBlazor.Client.ZMachine
 {
     public class FrameCollection 
     {
-        public FrameCollection(Machine machine)
+        public FrameCollection(ILogger logger)
         {
-            this.machine = machine;
+            if (logger == null) throw new ArgumentNullException(nameof(logger));
+
+            this.log = logger.ForContext<FrameCollection>();
         }
 
         public StackFrame PopFrame()
         {
-            machine.Logger.Information($"Pop frame to {innerStack.Peek().ReturnPC:X} Size:{innerStack.Count}");
+            log.Debug($"Pop frame to {innerStack.Peek().ReturnPC:X} Size:{innerStack.Count}");
             return innerStack.Pop();
         }
 
@@ -20,7 +23,7 @@ namespace ZMacBlazor.Client.ZMachine
         {
             if (newFrame == null) throw new ArgumentNullException(nameof(newFrame));
 
-            machine.Logger.Information($"Push frame {newFrame.ToString()} Size:{innerStack.Count} ");
+            log.Debug($"Push frame {newFrame.ToString()} Size:{innerStack.Count} ");
             innerStack.Push(newFrame);
         }
 
@@ -45,6 +48,6 @@ namespace ZMacBlazor.Client.ZMachine
 
        
         Stack<StackFrame> innerStack = new Stack<StackFrame>();
-        private readonly Machine machine;
+        private readonly ILogger log;
     }
 }

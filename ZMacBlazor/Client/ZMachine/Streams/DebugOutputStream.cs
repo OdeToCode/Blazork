@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using System;
 using System.Diagnostics;
 
 namespace ZMacBlazor.Client.ZMachine.Streams
@@ -9,7 +10,9 @@ namespace ZMacBlazor.Client.ZMachine.Streams
 
         public DebugOutputStream(ILogger logger)
         {
-            this.logger = logger;
+            if (logger == null) throw new ArgumentNullException(nameof(logger));
+
+            this.logger = logger.ForContext<DebugOutputStream>();
         }
 
         public void Write(string text)

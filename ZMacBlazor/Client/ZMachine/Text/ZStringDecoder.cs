@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -51,17 +52,20 @@ namespace ZMacBlazor.Client.ZMachine.Text
             {
                 throw new NotImplementedException("Must check for custom alphabet");
             }
+
+            log = machine.Logger.ForContext<ZStringDecoder>();
         }
 
-        public DecodedString Decode(ReadOnlySpan<byte> bytes)
+        public DecodedString Decode(SpanLocation location)
         {
             var position = 0;
             bool end = false;
             var builder = new StringBuilder();
+            log.Verbose($"\tDecoding string from bytes {location.ToString()}");
             
             while (!end)
             {
-                var value = Bits.MakeWord(bytes.Slice(position, 2));
+                var value = Bits.MakeWord(location.Bytes.Slice(position, 2));
                 end = (value & 0x8000) > 0;
                 
                 for(var i = 10; i >= 0; i -=5)
@@ -96,11 +100,7 @@ namespace ZMacBlazor.Client.ZMachine.Text
         // table and print the string at that word address.
         public string DecodeAbbreviation(int index, int number)
         {
-            var offset = (32 * (index - 1)) + (number * 2);
-            var ppAbbreviation = machine.Memory.WordAt(Header.ABBREVIATIONS);
-            var pAbbreviation = machine.Memory.WordAddressAt(ppAbbreviation + offset);
-            var abbreviationBytes = machine.Memory.SpanAt(pAbbreviation).Bytes;
-
+            var abbreviationBytes = machine.GetAbbreviation(index, number);
             var result = Decode(abbreviationBytes);
             return result.Text;
         }
@@ -115,6 +115,7 @@ namespace ZMacBlazor.Client.ZMachine.Text
                 state = State.A0;
                 
                 var abbreviation = DecodeAbbreviation(set, value);
+                log.Verbose($"\tDecoded abbreviation {set} {value} as {abbreviation}");
                 return (null, abbreviation);
             }
 
@@ -131,6 +132,7 @@ namespace ZMacBlazor.Client.ZMachine.Text
             if(mapped)
             {
                 state = State.A0;
+                log.Verbose($"\tDecoded {value} as {letter}");
                 return (letter, null);
             }
 
@@ -150,12 +152,14 @@ namespace ZMacBlazor.Client.ZMachine.Text
                 abbreviationSet = value;
             }
 
+            log.Verbose($"\tDecoder moved to state {state}");
             return (null, null);
         }
 
         int abbreviationSet = 0;
         State state = State.A0;
         readonly static Dictionary<int, char>[] alphabetMap;
+        private readonly ILogger log;
 
         enum State { A0, A1, A2, Abbr };
     }

@@ -12,11 +12,11 @@ namespace ZMacBlazor.Client.ZMachine
         public Machine(ILogger logger)
         {
             Memory = new MachineMemory(Stream.Null);
-            StackFrames = new FrameCollection(this);
+            StackFrames = new FrameCollection(logger);
             ObjectTable = new GameObjectTable(this);
             Decoder = new InstructionDecoder(this);
             Output = new CompositeOutputStream(new DebugOutputStream(logger));
-            Logger = logger;
+            Logger = logger.ForContext<Machine>();
         }
 
         public void Load(Stream memoryBytes)
@@ -90,6 +90,15 @@ namespace ZMacBlazor.Client.ZMachine
         public void SetPC(int newValue)
         {
             PC = newValue;
+        }
+
+        public SpanLocation GetAbbreviation(int index, int number)
+        {
+            var offset = (32 * (index - 1)) + (number * 2);
+            var ppAbbreviation = Memory.WordAt(Header.ABBREVIATIONS);
+            var pAbbreviation = Memory.WordAddressAt(ppAbbreviation + offset);
+            var location = Memory.SpanAt(pAbbreviation);
+            return location;
         }
 
         public byte Version => Memory.Version;

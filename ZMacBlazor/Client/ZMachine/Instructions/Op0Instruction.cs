@@ -28,7 +28,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             if(Operation.HasText)
             {
-                var decoded = textResolver.Decode(memory.Bytes.Slice(1));
+                var decoded = textResolver.Decode(memory.Forward(1));
                 Size += decoded.BytesConsumed;
                 Text = decoded.Text;
             }

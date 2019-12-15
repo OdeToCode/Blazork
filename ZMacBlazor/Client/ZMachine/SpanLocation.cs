@@ -12,6 +12,11 @@ namespace ZMacBlazor.Client.ZMachine
             Bytes = bytes;
         }
 
+        public SpanLocation Forward(int byteCount)
+        {
+            return new SpanLocation(Address + byteCount, Bytes.Slice(byteCount));
+        }
+
         public override string ToString()
         {
             var sb = new StringBuilder();

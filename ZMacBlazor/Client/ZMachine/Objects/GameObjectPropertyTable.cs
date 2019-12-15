@@ -16,9 +16,9 @@ namespace ZMacBlazor.Client.ZMachine.Objects
 
             var location = machine.Memory.SpanAt(startingAddress);
             var textLength = location.Bytes[0] * 2;
-            
+
             var decoder = new ZStringDecoder(machine);
-            Description = decoder.Decode(location.Bytes.Slice(1)).Text;
+            Description = decoder.Decode(location.Forward(1)).Text;
 
             Properties = new Dictionary<int, GameObjectProperty>();
             var propertyEntry = machine.Memory.MemoryAt(startingAddress + textLength + 1);

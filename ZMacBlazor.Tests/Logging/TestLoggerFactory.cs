@@ -8,11 +8,14 @@ namespace ZMacBlazor.Tests.Logging
         public static ILogger GetLogger()
         {
             var logger = new LoggerConfiguration()
-                                .MinimumLevel.Debug()
+                                .MinimumLevel.Verbose()
                                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                                .MinimumLevel.Override("ZMacBlazor.Client.ZMachine.FrameCollection", LogEventLevel.Warning)
+                                .MinimumLevel.Override("ZMacBlazor.Client.ZMachine.Machine", LogEventLevel.Warning)
+                                .MinimumLevel.Override("ZMacBlazor.Client.ZMachine.Streams.DebugOutputStream", LogEventLevel.Warning)
                                 .Enrich.FromLogContext()
-                                .WriteTo.Console()
-                                .WriteTo.File(@"..\..\..\..\zmacblazor.tests.log")
+                                .WriteTo.File(@"..\..\..\..\tests.log",
+                                              outputTemplate: "{SourceContext:lj}\n{Message:lj}{NewLine}{Exception}")
                                 .CreateLogger();
             return logger;
         }
