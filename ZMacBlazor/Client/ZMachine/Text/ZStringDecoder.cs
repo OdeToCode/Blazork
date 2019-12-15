@@ -102,6 +102,7 @@ namespace ZMacBlazor.Client.ZMachine.Text
         {
             var abbreviationBytes = machine.GetAbbreviation(index, number);
             var result = Decode(abbreviationBytes);
+            state = State.A0;
             return result.Text;
         }
 
@@ -115,7 +116,7 @@ namespace ZMacBlazor.Client.ZMachine.Text
                 state = State.A0;
                 
                 var abbreviation = DecodeAbbreviation(set, value);
-                log.Verbose($"\tDecoded abbreviation {set} {value} as {abbreviation}");
+                log.Verbose($"\tDecoded abbreviation {set} {value} as '{abbreviation}'");
                 return (null, abbreviation);
             }
 
@@ -132,7 +133,7 @@ namespace ZMacBlazor.Client.ZMachine.Text
             if(mapped)
             {
                 state = State.A0;
-                log.Verbose($"\tDecoded {value} as {letter}");
+                log.Verbose($"\tDecoded {value:X} as {letter}");
                 return (letter, null);
             }
 
