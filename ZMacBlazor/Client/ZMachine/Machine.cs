@@ -47,7 +47,7 @@ namespace ZMacBlazor.Client.ZMachine
             }
             else if (variableNumber <= 15)
             {
-                Logger.Information($"SetWordVariable varNum:{variableNumber} value:{value} localsCount:{StackFrames.Locals.Length}");
+                Logger.Information($"\tSetWordVariable varNum:{variableNumber} value:{value} localsCount:{StackFrames.Locals.Length}");
                 StackFrames.Locals[variableNumber - 1] = value;
             }
             else if (variableNumber <= 255)

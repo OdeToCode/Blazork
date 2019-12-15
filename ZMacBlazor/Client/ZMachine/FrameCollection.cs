@@ -15,7 +15,7 @@ namespace ZMacBlazor.Client.ZMachine
 
         public StackFrame PopFrame()
         {
-            log.Debug($"Pop frame to {innerStack.Peek().ReturnPC:X} Size:{innerStack.Count}");
+            log.Debug($"\tPop frame to {innerStack.Peek().ReturnPC:X} Size:{innerStack.Count}");
             return innerStack.Pop();
         }
 
@@ -23,7 +23,7 @@ namespace ZMacBlazor.Client.ZMachine
         {
             if (newFrame == null) throw new ArgumentNullException(nameof(newFrame));
 
-            log.Debug($"Push frame {newFrame.ToString()} Size:{innerStack.Count} ");
+            log.Debug($"\tPush frame {newFrame.ToString()} Size:{innerStack.Count} ");
             innerStack.Push(newFrame);
         }
 

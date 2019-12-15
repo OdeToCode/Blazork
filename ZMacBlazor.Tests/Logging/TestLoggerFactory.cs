@@ -1,5 +1,9 @@
 ﻿using Serilog;
 using Serilog.Events;
+using ZMacBlazor.Client.ZMachine;
+using ZMacBlazor.Client.ZMachine.Instructions;
+using ZMacBlazor.Client.ZMachine.Streams;
+using ZMacBlazor.Client.ZMachine.Text;
 
 namespace ZMacBlazor.Tests.Logging
 {
@@ -10,9 +14,11 @@ namespace ZMacBlazor.Tests.Logging
             var logger = new LoggerConfiguration()
                                 .MinimumLevel.Verbose()
                                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                                .MinimumLevel.Override("ZMacBlazor.Client.ZMachine.FrameCollection", LogEventLevel.Warning)
-                                .MinimumLevel.Override("ZMacBlazor.Client.ZMachine.Machine", LogEventLevel.Warning)
-                                .MinimumLevel.Override("ZMacBlazor.Client.ZMachine.Streams.DebugOutputStream", LogEventLevel.Warning)
+                                .MinimumLevel.Override(typeof(FrameCollection).FullName, LogEventLevel.Warning)
+                                .MinimumLevel.Override(typeof(Machine).FullName, LogEventLevel.Warning)
+                                .MinimumLevel.Override(typeof(DebugOutputStream).FullName, LogEventLevel.Warning)
+                              //  .MinimumLevel.Override(typeof(Instruction).FullName, LogEventLevel.Warning)
+                              //  .MinimumLevel.Override(typeof(ZStringDecoder).FullName, LogEventLevel.Warning)
                                 .Enrich.FromLogContext()
                                 .WriteTo.File(@"..\..\..\..\tests.log",
                                               outputTemplate: "{SourceContext:lj}\n{Message:lj}{NewLine}{Exception}")
