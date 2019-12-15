@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Serilog;
 using System;
 using System.IO;
 using ZMacBlazor.Client.ZMachine.Instructions;
@@ -47,7 +47,7 @@ namespace ZMacBlazor.Client.ZMachine
             }
             else if (variableNumber <= 15)
             {
-                Logger.Log(LogLevel.Information, $"SetWordVariable varNum:{variableNumber} value:{value} localsCount:{StackFrames.Locals.Length}");
+                Logger.Information($"SetWordVariable varNum:{variableNumber} value:{value} localsCount:{StackFrames.Locals.Length}");
                 StackFrames.Locals[variableNumber - 1] = value;
             }
             else if (variableNumber <= 255)

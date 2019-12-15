@@ -12,7 +12,7 @@ namespace ZMacBlazor.Tests.ZMachine
         public void RunZork()
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
-            using var logger = new TestLogger($"{nameof(DecoderTests)}-{nameof(RunZork)}.log");
+            var logger = TestLoggerFactory.GetLogger();
             var machine = new Machine(logger);
             machine.Load(file);
             machine.Execute();
@@ -22,7 +22,7 @@ namespace ZMacBlazor.Tests.ZMachine
         public void DecodesOpeningZorkInstruction()
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
-            using var logger = new NullLogger();
+            var logger = NullLoggerFactory.GetLogger();
             var machine = new Machine(logger);
             machine.Load(file);
             

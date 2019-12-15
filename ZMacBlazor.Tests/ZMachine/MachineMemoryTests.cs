@@ -11,7 +11,7 @@ namespace ZMacBlazor.Tests.ZMachine
         public void SetsGlobalWord()
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
-            using var logger = new NullLogger();
+            var logger = NullLoggerFactory.GetLogger();
             var machine = new Machine(logger);
             machine.Load(file);
 
@@ -24,7 +24,7 @@ namespace ZMacBlazor.Tests.ZMachine
         public void ReadsHeader()
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
-            using var logger = new NullLogger();
+            var logger = NullLoggerFactory.GetLogger();
             var machine = new Machine(logger);
             machine.Load(file);
 

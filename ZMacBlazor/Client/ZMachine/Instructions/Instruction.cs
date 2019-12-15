@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Text;
+﻿using System.Text;
 
 namespace ZMacBlazor.Client.ZMachine.Instructions
 {
@@ -23,7 +21,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             sb.Append($"{ToString()}");
             sb.Append($"\t Raw: @{memory.Address:X} {memory.ToString()}");
 
-            machine.Logger.Log(LogLevel.Trace, sb.ToString());
+            machine.Logger.Information(sb.ToString());
         }
 
         public override string ToString()

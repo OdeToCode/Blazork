@@ -9,7 +9,7 @@ namespace ZMacBlazor.Tests.ZMachine
         [Fact]
         public void CanPushAndPop()
         {
-            var m = new Machine(new NullLogger());
+            var m = new Machine(NullLoggerFactory.GetLogger());
             var s = new FrameCollection(m);
             s.PushFrame(new StackFrame(0x55FF, 2, 1));
             s.Locals[0] = 22;

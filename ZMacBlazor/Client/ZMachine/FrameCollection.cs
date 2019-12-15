@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ZMacBlazor.Client.ZMachine
@@ -13,7 +12,7 @@ namespace ZMacBlazor.Client.ZMachine
 
         public StackFrame PopFrame()
         {
-            machine.Logger.Log(LogLevel.Information, $"Pop frame to {innerStack.Peek().ReturnPC:X} Size:{innerStack.Count} ");
+            machine.Logger.Information($"Pop frame to {innerStack.Peek().ReturnPC:X} Size:{innerStack.Count}");
             return innerStack.Pop();
         }
 
@@ -21,7 +20,7 @@ namespace ZMacBlazor.Client.ZMachine
         {
             if (newFrame == null) throw new ArgumentNullException(nameof(newFrame));
 
-            machine.Logger.Log(LogLevel.Information, $"Push frame {newFrame.ToString()} Size:{innerStack.Count} ");
+            machine.Logger.Information($"Push frame {newFrame.ToString()} Size:{innerStack.Count} ");
             innerStack.Push(newFrame);
         }
 

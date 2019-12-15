@@ -11,7 +11,7 @@ namespace ZMacBlazor.Tests.ZMachine
         [Fact]
         public void CanReturnValue()
         {
-            using var logger = new NullLogger();
+            var logger = NullLoggerFactory.GetLogger();
             var machine = new Machine(logger);
             var operand = new Operand(OperandType.Large, 0xFFFF, machine);
 
@@ -21,7 +21,7 @@ namespace ZMacBlazor.Tests.ZMachine
         [Fact]
         public void CanReturnSignedValue()
         {
-            using var logger = new NullLogger();
+            var logger = NullLoggerFactory.GetLogger();
             var machine = new Machine(logger);
 
             var operand1 = new Operand(OperandType.Large, 0xFFFF, machine);

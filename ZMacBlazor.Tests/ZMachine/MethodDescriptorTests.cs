@@ -14,7 +14,7 @@ namespace ZMacBlazor.Tests.ZMachine
         public void Decodes_Method_At_5472()
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
-            using var logger = new NullLogger();
+            var logger = NullLoggerFactory.GetLogger();
             var machine = new Machine(logger);
             machine.Load(file);
 

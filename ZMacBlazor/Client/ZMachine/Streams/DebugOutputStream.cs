@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Serilog;
 using System.Diagnostics;
 
 namespace ZMacBlazor.Client.ZMachine.Streams
@@ -14,7 +14,7 @@ namespace ZMacBlazor.Client.ZMachine.Streams
 
         public void Write(string text)
         {
-            logger.LogInformation(text);
+            logger.Information(text);
             Debug.Write(text);
         }
     }

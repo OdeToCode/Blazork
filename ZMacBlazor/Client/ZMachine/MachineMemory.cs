@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using ZMacBlazor.Client.ZMachine.Instructions;
 
 namespace ZMacBlazor.Client.ZMachine
 {
