@@ -17,11 +17,15 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             if (Offset == 0 && BranchOnTrue == result)
             {
-                throw new InvalidOperationException("This combo Means `return false` from current routine");
+                var frame = machine.StackFrames.PopFrame();
+                machine.SetVariable(frame.StoreVariable, 0);
+                machine.SetPC(frame.ReturnPC);
             }
             else if (Offset == 1 && BranchOnTrue == result)
             {
-                throw new InvalidOperationException("must `return true` from current routine");
+                var frame = machine.StackFrames.PopFrame();
+                machine.SetVariable(frame.StoreVariable, 1);
+                machine.SetPC(frame.ReturnPC);
             }
             else if (BranchOnTrue == result)
             {
