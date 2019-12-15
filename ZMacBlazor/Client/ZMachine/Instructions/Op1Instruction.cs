@@ -25,6 +25,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Operation = OpCode switch
             {
                 0x00 => new Operation(nameof(JZ), JZ, hasBranch: true),
+                0x03 => new Operation(nameof(GetParent), GetParent, hasStore: true),
                 0x0A => new Operation(nameof(PrintObj), PrintObj),
                 0x0B => new Operation(nameof(Ret), Ret),
                 0x0C => new Operation(nameof(Jump), Jump),
@@ -44,6 +45,16 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void GetParent(SpanLocation location)
+        {
+            var objectNumber = Operands[0].Value;
+            var gameObject = machine.ObjectTable.GetObject(objectNumber);
+            var parentNumber = gameObject.Parent;
+
+            machine.SetVariable(StoreResult, parentNumber);
+            machine.SetPC(location.Address + Size);
         }
 
         public void PrintObj(SpanLocation location)
