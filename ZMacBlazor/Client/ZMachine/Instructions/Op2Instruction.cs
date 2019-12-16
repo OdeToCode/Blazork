@@ -23,6 +23,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Operation = OpCode switch
             {
                 0x01 => new Operation(nameof(JE), JE, hasBranch: true),
+                0x03 => new Operation(nameof(JG), JG, hasBranch: true),
                 0x05 => new Operation(nameof(IncChk), IncChk, hasBranch: true),
                 0x06 => new Operation(nameof(Jin), Jin, hasBranch: true),
                 0x09 => new Operation(nameof(And), And, hasStore: true),
@@ -211,6 +212,15 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             machine.SetPC(memory.Address + Size);
         }
         
+        public void JG(SpanLocation location)
+        {
+            var a = Operands[0].SignedValue;
+            var b = Operands[1].SignedValue;
+            var result = a > b;
+
+            Branch.Go(result, machine, Size, location);
+        }
+
         public void JE(SpanLocation location)
         {
             var a = Operands[0].Value;
