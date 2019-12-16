@@ -14,7 +14,7 @@ namespace ZMacBlazor.Tests.Logging
             var logger = new LoggerConfiguration()
                                 .MinimumLevel.Warning()
                                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                                //.MinimumLevel.Override(typeof(FrameCollection).FullName, LogEventLevel.Verbose)
+                                .MinimumLevel.Override(typeof(FrameCollection).FullName, LogEventLevel.Verbose)
                                 //.MinimumLevel.Override(typeof(Machine).FullName, LogEventLevel.Verbose)
                                 //.MinimumLevel.Override(typeof(DebugOutputStream).FullName, LogEventLevel.Verbose)
                                 .MinimumLevel.Override(typeof(Instruction).FullName, LogEventLevel.Verbose)

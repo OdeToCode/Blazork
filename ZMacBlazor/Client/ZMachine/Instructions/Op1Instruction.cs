@@ -32,18 +32,18 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 0x0C => new Operation(nameof(Jump), Jump),
                 _ => throw new InvalidOperationException($"Unknown OP1 opcode {OpCode:X}")
             };
+            if (Operation.HasStore)
+            {
+                StoreResult = memory.Bytes[Size];
+                Size += 1;
+            }
             if (Operation.HasBranch)
             {
                 var branchData = machine.Memory.SpanAt(memory.Address + Size);
                 Branch = branchResolver.ResolveBranch(branchData);
                 Size += Branch.Size;
             }
-            if (Operation.HasStore)
-            {
-                StoreResult = memory.Bytes[Size];
-                Size += 1;
-            }
-
+           
             DumpToLog(memory);
             Operation.Execute(memory);
         }

@@ -56,17 +56,16 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 op2OperandResolver.AddOperands(Operands, memory.Bytes);
                 Size = 1 + Operands.Size;
             }
-
+            if (Operation.HasStore)
+            {
+                StoreResult = memory.Bytes[Size];
+                Size += 1;
+            }
             if (Operation.HasBranch)
             {
                 var branchData = machine.Memory.SpanAt(memory.Address + Size);
                 Branch = branchResolver.ResolveBranch(branchData);
                 Size += Branch.Size;
-            }
-            if (Operation.HasStore)
-            {
-                StoreResult = memory.Bytes[Size];
-                Size += 1;
             }
 
             DumpToLog(memory);
