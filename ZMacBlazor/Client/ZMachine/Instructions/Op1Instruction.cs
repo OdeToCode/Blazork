@@ -113,7 +113,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             // routine call state), although it is considered bad practice to do so and the Txd 
             // disassembler is confused by it.
             var offset = Operands[0].SignedValue;
-            machine.SetPC(location.Address + Size + offset - 2);
+            machine.SetPC(location.Address + Size + offset);
         }
     }
 }
