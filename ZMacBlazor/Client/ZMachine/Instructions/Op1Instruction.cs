@@ -25,6 +25,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Operation = OpCode switch
             {
                 0x00 => new Operation(nameof(JZ), JZ, hasBranch: true),
+                0x01 => new Operation(nameof(GetSibling), GetSibling, hasBranch: true, hasStore: true),
                 0x02 => new Operation(nameof(GetChild), GetChild, hasStore: true, hasBranch: true),
                 0x03 => new Operation(nameof(GetParent), GetParent, hasStore: true),
                 0x0A => new Operation(nameof(PrintObj), PrintObj),
@@ -46,6 +47,17 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
            
             DumpToLog(memory);
             Operation.Execute(memory);
+        }
+
+        public void GetSibling(SpanLocation location)
+        {
+            var objectNumber = Operands[0].Value;
+            var gameObject = machine.ObjectTable.GetObject(objectNumber);
+            var siblingNumber = gameObject.Sibling;
+            var hasSibling = siblingNumber != 0;
+
+            machine.SetVariable(StoreResult, hasSibling ? 1 : 0);
+            Branch.Go(hasSibling, machine, Size, location);
         }
 
         public void GetChild(SpanLocation location)

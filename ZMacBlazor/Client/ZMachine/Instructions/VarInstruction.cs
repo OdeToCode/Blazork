@@ -26,15 +26,15 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 0x09 => new Operation(nameof(Pull), Pull),
                 _ => throw new InvalidOperationException($"Unknown VAR opcode {OpCode:X}")
             };
+            if (Operation.HasStore)
+            {
+                StoreResult = memory.Bytes[Size];
+                Size += 1;
+            }
             if (Operation.HasBranch)
             {
                 Size += Branch.Size;
                 throw new NotImplementedException("Do this");
-            }
-            if(Operation.HasStore)
-            {
-                StoreResult = memory.Bytes[Size];
-                Size += 1;
             }
 
             DumpToLog(memory);
