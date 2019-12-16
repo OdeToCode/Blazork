@@ -20,11 +20,11 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Size = 0;
         }
 
-        public void DumpToLog(SpanLocation memory)
+        public void DumpToLog(SpanLocation memory, int size)
         {
             var sb = new StringBuilder();
             sb.Append($"\t{ToString()}");
-            sb.Append($"\t{memory.ToString()}");
+            sb.Append($"\t{memory.ToString(size)}");
 
             log.Information(sb.ToString());
         }

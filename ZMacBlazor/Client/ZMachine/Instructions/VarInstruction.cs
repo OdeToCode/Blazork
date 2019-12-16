@@ -37,7 +37,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 throw new NotImplementedException("Do this");
             }
 
-            DumpToLog(memory);
+            DumpToLog(memory, Size);
             Operation.Execute(memory);
         }
 

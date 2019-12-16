@@ -17,11 +17,11 @@ namespace ZMacBlazor.Client.ZMachine
             return new SpanLocation(Address + byteCount, Bytes.Slice(byteCount));
         }
 
-        public override string ToString()
+        public string ToString(int size = 10)
         {
             var sb = new StringBuilder();
             sb.Append($"@{Address:X} ");
-            for(var i = 0; i < 10; i++)
+            for(var i = 0; i < size; i++)
             {
                 sb.Append($"{Bytes[i]:X} ");
             }

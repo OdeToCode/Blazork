@@ -29,8 +29,8 @@ namespace ZMacBlazor.Client.ZMachine
         }
 
         public void Execute()
-        {   
-            var i = 2000;
+        {
+            var i = 8000;
             while(--i > 0)
             {
                 var memory = Memory.SpanAt(PC);

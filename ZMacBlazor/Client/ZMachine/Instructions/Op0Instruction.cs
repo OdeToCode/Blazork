@@ -44,7 +44,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 Size += Branch.Size;
             }
 
-            DumpToLog(memory);
+            DumpToLog(memory, Size);
             Operation.Execute(memory);
         }
 
