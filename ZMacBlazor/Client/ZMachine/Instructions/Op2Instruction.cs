@@ -24,6 +24,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             {
                 0x01 => new Operation(nameof(JE), JE, hasBranch: true),
                 0x03 => new Operation(nameof(JG), JG, hasBranch: true),
+                0x04 => new Operation(nameof(DecChk), DecChk, hasBranch: true),
                 0x05 => new Operation(nameof(IncChk), IncChk, hasBranch: true),
                 0x06 => new Operation(nameof(Jin), Jin, hasBranch: true),
                 0x09 => new Operation(nameof(And), And, hasStore: true),
@@ -131,6 +132,19 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             machine.ObjectTable.InsertObject(target, destination);
             machine.SetPC(location.Address + Size);
+        }
+
+        public void DecChk(SpanLocation location)
+        {
+            // dec_chk is indirect
+            var variable = Operands[0].RawValue;
+            var value = machine.ReadVariable(variable);
+
+            value -= 1;
+            machine.SetVariable(variable, value);
+
+            var result = value < Operands[1].Value;
+            Branch.Go(result, machine, Size, location);
         }
 
         public void IncChk(SpanLocation location)
