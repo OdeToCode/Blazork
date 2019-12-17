@@ -69,7 +69,9 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var siblingNumber = gameObject.Sibling;
             var hasSibling = siblingNumber != 0;
 
-            machine.SetVariable(StoreResult, hasSibling ? 1 : 0);
+            log.Verbose($"GetSibling for {objectNumber} is {siblingNumber} => {StoreResult}");
+
+            machine.SetVariable(StoreResult, siblingNumber);
             Branch.Go(hasSibling, machine, Size, location);
         }
 
@@ -106,6 +108,9 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         {
             var value = Operands[0].Value;
             var result = value == 0;
+
+            log.Verbose($"\tJZ {value} is {result}");
+
             Branch.Go(result, machine, Size, location);
         }
 
@@ -125,7 +130,10 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             // It is legal for this to jump into a different routine(which should not change the 
             // routine call state), although it is considered bad practice to do so and the Txd 
             // disassembler is confused by it.
-            var offset = Operands[0].SignedValue;
+            var offset = Operands[0].SignedValue + 1;
+
+            log.Verbose($"\tJump {offset} to {(location.Address + offset):X}");
+
             machine.SetPC(location.Address + offset);
         }
     }
