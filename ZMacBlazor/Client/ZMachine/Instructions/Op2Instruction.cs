@@ -146,7 +146,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var result = value < Operands[1].Value;
             Branch.Go(result, machine, Size, location);
         }
-
+        
         public void IncChk(SpanLocation location)
         {
             // inc_chk is indirect

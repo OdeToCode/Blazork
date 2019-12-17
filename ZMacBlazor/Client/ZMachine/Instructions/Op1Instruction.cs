@@ -28,6 +28,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 0x01 => new Operation(nameof(GetSibling), GetSibling, hasBranch: true, hasStore: true),
                 0x02 => new Operation(nameof(GetChild), GetChild, hasStore: true, hasBranch: true),
                 0x03 => new Operation(nameof(GetParent), GetParent, hasStore: true),
+                0x06 => new Operation(nameof(Dec), Dec),
                 0x0A => new Operation(nameof(PrintObj), PrintObj),
                 0x0B => new Operation(nameof(Ret), Ret),
                 0x0C => new Operation(nameof(Jump), Jump),
@@ -47,6 +48,18 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
            
             DumpToLog(memory, Size);
             Operation.Execute(memory);
+        }
+
+        public void Dec(SpanLocation location)
+        {
+            var variable = Operands[0].RawValue;
+            var value = machine.ReadVariable(variable);
+
+            value += 1;
+
+            machine.SetVariable(variable, value);
+
+            machine.SetPC(location.Address + Size);
         }
 
         public void GetSibling(SpanLocation location)
