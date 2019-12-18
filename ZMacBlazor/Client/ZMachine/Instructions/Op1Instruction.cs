@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ZMacBlazor.Client.ZMachine.Text;
 
 namespace ZMacBlazor.Client.ZMachine.Instructions
 {
@@ -32,6 +33,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 0x0A => new Operation(nameof(PrintObj), PrintObj),
                 0x0B => new Operation(nameof(Ret), Ret),
                 0x0C => new Operation(nameof(Jump), Jump),
+                0x0d => new Operation(nameof(PrintPaddr), PrintPaddr),
                 _ => throw new InvalidOperationException($"Unknown OP1 opcode {OpCode:X}")
             };
             if (Operation.HasStore)
@@ -48,6 +50,16 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
            
             DumpToLog(memory, Size);
             Operation.Execute(memory);
+        }
+
+        public void PrintPaddr(SpanLocation location)
+        {
+            var address = Operands[0].Value;
+            var unpacked = machine.Memory.Unpack(address);
+            var stringDecoder = new ZStringDecoder(machine);
+            var text = stringDecoder.Decode(machine.Memory.SpanAt(unpacked));
+            machine.Output.Write(Text);
+            machine.SetPC(memory.Address + Size);
         }
 
         public void Dec(SpanLocation location)
