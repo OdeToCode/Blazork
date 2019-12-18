@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace ZMacBlazor.Client.ZMachine.Instructions
 {
@@ -120,15 +121,15 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var callAddress = machine.Memory.Unpack(Operands[0].Value);
             var methodMemory = machine.Memory.SpanAt(callAddress);
             var method = new MethodDescriptor(methodMemory, machine);
-
+            var capturedArgs = Operands.Select(o => o.Value).ToList();
             
             var newFrame = new StackFrame(memory.Address + Size,
                                           method.LocalsCount, StoreResult);
             machine.StackFrames.PushFrame(newFrame);
             
-            for(var i = 1; i < Operands.Count; i++)
+            for(var i = 1; i < capturedArgs.Count; i++)
             {
-                machine.SetVariable(i, Operands[i].Value);
+                machine.SetVariable(i, capturedArgs[i]);
             }
 
             machine.SetPC(callAddress + method.HeaderSize);

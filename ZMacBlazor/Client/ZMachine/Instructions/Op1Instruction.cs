@@ -59,7 +59,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var stringDecoder = new ZStringDecoder(machine);
             var text = stringDecoder.Decode(machine.Memory.SpanAt(unpacked));
             machine.Output.Write(Text);
-            machine.SetPC(memory.Address + Size);
+            machine.SetPC(location.Address + Size);
         }
 
         public void Dec(SpanLocation location)
