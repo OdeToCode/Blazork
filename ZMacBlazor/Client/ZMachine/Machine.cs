@@ -78,8 +78,9 @@ namespace ZMacBlazor.Client.ZMachine
             }
             else if(variableNumber <= 255)
             {
-                var bytes = Memory.Globals.Slice((variableNumber - 16) * 2, 2);
-                return Bits.MakeWord(bytes);
+                var address = Bits.MakeWord(Memory.Globals) + ((variableNumber - 16) * 2);
+                var value = Memory.SpanAt(address, 2);
+                return Bits.MakeWord(value.Bytes);
             }
             else
             {

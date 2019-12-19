@@ -226,8 +226,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
         public void Add(SpanLocation memory)
         {
-            short a = (short)Operands[0].SignedValue;
-            short b = (short)Operands[1].SignedValue;
+            var a = Operands[0].SignedValue;
+            var b = Operands[1].SignedValue;
             var result = a + b;
 
             log.Verbose($"\tAdd {a:X}({a}) {b:X}({b}) is {result:X}({result}) => {StoreResult}");

@@ -17,7 +17,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             {
                 return Type switch
                 {
-                    OperandType.Small => (byte)RawValue,
+                    OperandType.Small => (ushort)RawValue,
                     OperandType.Large => (ushort)RawValue,
                     OperandType.Variable => (ushort)machine.ReadVariable(RawValue),
                     _ => throw new InvalidOperationException($"Illegal operand resolve type {Type:x}")
@@ -31,7 +31,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             {
                 return Type switch
                 {
-                    OperandType.Small => (sbyte)RawValue,
+                    OperandType.Small => (short)RawValue,
                     OperandType.Large => (short)RawValue,
                     OperandType.Variable => (short)machine.ReadVariable(RawValue),
                     _ => throw new InvalidOperationException($"Illegal operand resolve type {Type:x}")
