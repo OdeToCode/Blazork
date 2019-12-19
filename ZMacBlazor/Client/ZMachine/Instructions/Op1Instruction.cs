@@ -65,7 +65,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         public void Dec(SpanLocation location)
         {
             var variable = Operands[0].RawValue;
-            var value = machine.ReadVariable(variable);
+            var value = (short)machine.ReadVariable(variable);
 
             value -= 1;
 
@@ -121,7 +121,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var value = Operands[0].Value;
             var result = value == 0;
 
-            log.Verbose($"\tJZ {value} is {result}");
+            log.Verbose($"\tJZ {value:X} is {result}");
 
             Branch.Go(result, machine, Size, location);
         }
@@ -144,7 +144,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             // disassembler is confused by it.
             var offset = Operands[0].SignedValue + 1;
 
-            log.Verbose($"\tJump {offset} to {(location.Address + offset):X}");
+            log.Verbose($"\tJump {offset:X} to {(location.Address + offset):X}");
 
             machine.SetPC(location.Address + offset);
         }

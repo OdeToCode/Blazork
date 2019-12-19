@@ -6,17 +6,6 @@ namespace ZMacBlazor.Tests.ZMachine
     public class BitTests
     {
         [Fact]
-        public void MAkeSignedWord()
-        {
-            Assert.Equal(-1, Bits.MakeSignedWord(new byte[] { 0xFF, 0xFF }));
-            Assert.Equal(-2, Bits.MakeSignedWord(new byte[] { 0xFF, 0xFE }));
-            Assert.Equal(-41, Bits.MakeSignedWord(new byte[] { 0xFF, 0xD7 }));
-            Assert.Equal(1, Bits.MakeSignedWord(new byte[] { 0x00, 0x01 }));
-            Assert.Equal(127, Bits.MakeSignedWord(new byte[] { 0x00, 0x7F }));
-            Assert.Equal(32767, Bits.MakeSignedWord(new byte[] { 0x7F, 0xFF }));
-        }
-
-        [Fact]
         public void BreakWordTests()
         {
             Assert.Equal((0xFF, 0x00), Bits.BreakWord(0xFF00));

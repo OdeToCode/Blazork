@@ -66,15 +66,6 @@ namespace ZMacBlazor.Client.ZMachine
             return value >> 5;
         }
 
-        public static int MakeSignedWord(ReadOnlySpan<byte> bytes)
-        {
-            var msb = bytes[0];
-            var lsb = bytes[1];
-            var value = (short)((msb << 8) | lsb);
-
-            return value;
-        }
-
         public static bool FiveAndFourSet(byte value)
         {
             var mask = (byte)0b0011_0000;

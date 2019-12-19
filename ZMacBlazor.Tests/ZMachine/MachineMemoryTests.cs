@@ -8,7 +8,7 @@ namespace ZMacBlazor.Tests.ZMachine
     public class MachineMemoryTests
     {
         [Fact]
-        public void SetsGlobalWordSignedAndUnSigned()
+        public void SetsGlobalWordUnSigned()
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
             var logger = NullLoggerFactory.GetLogger();
@@ -18,8 +18,11 @@ namespace ZMacBlazor.Tests.ZMachine
             machine.SetVariable(20, 1);
             Assert.Equal(1, machine.ReadVariable(20));
 
-            machine.SetVariable(20, -1);
-            Assert.Equal(-1, machine.ReadVariable(20));
+            machine.SetVariable(20, 0xFFFF);
+            Assert.Equal(0xFFFF, machine.ReadVariable(20));
+
+            machine.SetVariable(20, 0xFFFF);
+            Assert.Equal(-1, (short)machine.ReadVariable(20));
         }
 
         [Fact]
