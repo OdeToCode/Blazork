@@ -216,9 +216,9 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var baseArray = Operands[0].Value;
             var index = Operands[1].Value;
             var arrayLocation = baseArray + (2 * index);
-            var word = machine.Memory.WordAt(arrayLocation);
+            var word = machine.Memory.SignedWordAt(arrayLocation);
 
-            log.Verbose($"\tLoadW {baseArray} {index} is at {arrayLocation} loaded {word} => {StoreResult}");
+            log.Verbose($"\tLoadW {baseArray:X} {index:X} is at {arrayLocation:X} loaded {word:X} => {StoreResult}");
 
             machine.SetVariable(StoreResult, word);
             machine.SetPC(location.Address + Size);
@@ -226,8 +226,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
         public void Add(SpanLocation memory)
         {
-            var a = Operands[0].Value;
-            var b = Operands[1].Value;
+            var a = Operands[0].SignedValue;
+            var b = Operands[1].SignedValue;
             var result = a + b;
 
             log.Verbose($"\tAdd {a} {b} is {result} => {StoreResult}");
@@ -247,8 +247,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
         public void JE(SpanLocation location)
         {
-            var a = Operands[0].Value;
-            var b = Operands[1].Value;
+            var a = Operands[0].SignedValue;
+            var b = Operands[1].SignedValue;
             var result = a == b;
 
             log.Verbose($"\tJE: {a} {b} is {result}");

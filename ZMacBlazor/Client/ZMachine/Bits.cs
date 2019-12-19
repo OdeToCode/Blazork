@@ -45,12 +45,12 @@ namespace ZMacBlazor.Client.ZMachine
             return (byte)(value & 0b0011_1111);
         }
 
-        public static int MakeWordFromBottomFourteen(ReadOnlySpan<byte> bytes)
+        public static int MakeSignedWordFromBottomFourteen(ReadOnlySpan<byte> bytes)
         {
             var msb = Bits.BottomSix(bytes[0]);
             var lsb = bytes[1];
 
-            return ((msb << 8) | (lsb));
+            return (short)((msb << 8) | (lsb));
         }
 
         public static int MakeWord(ReadOnlySpan<byte> bytes)

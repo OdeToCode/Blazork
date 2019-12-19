@@ -26,6 +26,11 @@ namespace ZMacBlazor.Client.ZMachine
             return Bits.MakeWord(SpanAt(address).Bytes);
         }
 
+        public int SignedWordAt(int address)
+        {
+            return Bits.MakeSignedWord(SpanAt(address).Bytes);
+        }
+
         public int WordAddressAt(int address)
         {
             return Bits.MakeWord(SpanAt(address).Bytes) * 2;

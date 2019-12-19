@@ -73,7 +73,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
         public void PrintNum(SpanLocation location)
         {
-            var number = Operands[0].Value;
+            var number = Operands[0].SignedValue;
             machine.Output.Write(number.ToString());
 
             machine.SetPC(location.Address + Size);

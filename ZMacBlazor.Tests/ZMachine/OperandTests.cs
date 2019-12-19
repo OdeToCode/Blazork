@@ -70,7 +70,7 @@ namespace ZMacBlazor.Tests.ZMachine
             Assert.Equal(127, operand5.Value);
 
             Assert.Equal(32767, operand6.SignedValue);
-            Assert.Equal(127, operand5.Value);
+            Assert.Equal(32767, operand6.Value);
         }
     }
 }

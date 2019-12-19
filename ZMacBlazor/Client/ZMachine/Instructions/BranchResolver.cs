@@ -29,7 +29,7 @@
             }
             else
             {
-                offset = Bits.MakeWordFromBottomFourteen(memory.Bytes);
+                offset = Bits.MakeSignedWordFromBottomFourteen(memory.Bytes);
             }
 
             return new BranchDescriptor(branchOnTrue, offset, oneByteOffset ? 1 : 2);
