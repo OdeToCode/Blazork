@@ -36,6 +36,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 0x10 => new Operation(nameof(LoadB), LoadB, hasStore: true),
                 0x11 => new Operation(nameof(GetProp), GetProp, hasStore: true),
                 0x14 => new Operation(nameof(Add), Add, hasStore: true),
+                0x15 => new Operation(nameof(Sub), Sub, hasStore: true),
                 _ => throw new InvalidOperationException($"Unknown OP2 opcode {OpCode:X}")
             };
 
@@ -222,6 +223,16 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             machine.SetVariable(StoreResult, word);
             machine.SetPC(location.Address + Size);
+        }
+
+        public void Sub(SpanLocation memory)
+        {
+            var a = Operands[0].SignedValue;
+            var b = Operands[1].SignedValue;
+            var result = a - b;
+
+            machine.SetVariable(StoreResult, result);
+            machine.SetPC(memory.Address + Size);
         }
 
         public void Add(SpanLocation memory)
