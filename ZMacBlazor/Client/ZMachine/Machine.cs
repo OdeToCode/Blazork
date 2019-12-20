@@ -57,8 +57,10 @@ namespace ZMacBlazor.Client.ZMachine
 
                 var (msb, lsb) = Bits.BreakWord(value);
 
-                Memory.Globals[msAddress] = msb;
-                Memory.Globals[lsAddress] = lsb;
+                var address = Bits.MakeWord(Memory.Globals) + ((variableNumber - 16) * 2);
+                var place = Memory.SpanAt(address, 2);
+                place.Bytes[0] = msb;
+                place.Bytes[1] = lsb;
             }
             else
             {
