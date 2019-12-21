@@ -21,15 +21,6 @@ namespace ZMacBlazor.Tests.ZMachine
             var operand5 = new Operand(OperandType.Small, 0x7F, machine);
             var operand6 = new Operand(OperandType.Small, 0x10, machine);
 
-            Assert.Equal(-1, operand1.SignedValue);
-            Assert.Equal(255, operand1.Value);
-
-            Assert.Equal(-2, operand2.SignedValue);
-            Assert.Equal(254, operand2.Value);
-
-            Assert.Equal(-41, operand3.SignedValue);
-            Assert.Equal(215, operand3.Value);
-
             Assert.Equal(1, operand4.SignedValue);
             Assert.Equal(1, operand4.Value);
 

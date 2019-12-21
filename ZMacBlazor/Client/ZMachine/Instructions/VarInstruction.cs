@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace ZMacBlazor.Client.ZMachine.Instructions
 {
@@ -39,7 +40,6 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             }
 
             DumpToLog(memory, Size);
-            Operation.Execute(memory);
         }
 
         public void Pull(SpanLocation location)
@@ -52,6 +52,9 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             // pull is really a "peek" operation
             var value = machine.StackFrames.RoutineStack.Peek();
             var variable = Operands[0].Value;
+
+            log.Debug($"\tPull {value} => {variable}");
+
             machine.SetVariable(variable, value);
             machine.SetPC(location.Address + Size);
         }
@@ -59,6 +62,9 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         public void Push(SpanLocation location)
         {
             var value = Operands[0].Value;
+
+            log.Debug($"\tPush {value} => 0");
+
             machine.StackFrames.RoutineStack.Push(value);
             machine.SetPC(location.Address + Size);
         }
@@ -66,16 +72,20 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         public void PrintChar(SpanLocation location)
         {
             var character = (char)Operands[0].Value;
-            machine.Output.Write(character.ToString());
 
+            log.Debug($"\tPrintChar {character}");
+
+            machine.Output.Write(character.ToString());
             machine.SetPC(location.Address + Size);
         }
 
         public void PrintNum(SpanLocation location)
         {
             var number = Operands[0].SignedValue;
-            machine.Output.Write(number.ToString());
 
+            log.Debug($"\tPrintNum {number}");
+
+            machine.Output.Write(number.ToString());
             machine.SetPC(location.Address + Size);
         }
 
@@ -93,14 +103,16 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             var propertyNumber = Operands[1].Value;
             var gameProperty = gameObject.Properties[propertyNumber];
+            var value = Operands[2].Value;
 
             if(gameProperty.Value.Length > 2)
             {
                 throw new InvalidOperationException("Illegal to PutProp on a property larger than 2 bytes");
             }
 
-            gameProperty.SetValue(Operands[2].Value);
+            log.Debug($"\tPutProp obj {objectNumber} prop {propertyNumber} value {value}");
 
+            gameProperty.SetValue(Operands[2].Value);
             machine.SetPC(location.Address + Size);
         }
 
@@ -110,6 +122,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var index = Operands[1].Value;
             var arrayLocation = baseArray + (2 * index);
             var value = Operands[2].Value;
+
+            log.Debug($"\tStoreW {value} at {arrayLocation}");
 
             machine.Memory.StoreWordAt(arrayLocation, value);
             machine.SetPC(location.Address + Size);
@@ -130,6 +144,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             {
                 machine.SetVariable(i, capturedArgs[i-1]);
             }
+
+            log.Debug($"\tCall {callAddress:X} with {capturedArgs.Aggregate(new StringBuilder(), (sb, v) => sb.Append(v.ToString("X") + " "), sb => sb)}");
 
             machine.SetPC(callAddress + method.HeaderSize);
         }

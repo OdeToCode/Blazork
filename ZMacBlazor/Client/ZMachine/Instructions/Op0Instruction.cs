@@ -45,13 +45,14 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             }
 
             DumpToLog(memory, Size);
-            Operation.Execute(memory);
         }
 
         public void RetFalse(SpanLocation location)
         {
             var returnValue = 0;
             var frame = machine.StackFrames.PopFrame();
+
+            log.Debug($"RetFalse to {frame.ReturnPC}");
 
             machine.SetVariable(frame.StoreVariable, returnValue);
             machine.SetPC(frame.ReturnPC);
@@ -62,18 +63,23 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var returnValue = 1;
             var frame = machine.StackFrames.PopFrame();
 
+            log.Debug($"RetTrue to {frame.ReturnPC}");
+
             machine.SetVariable(frame.StoreVariable, returnValue);
             machine.SetPC(frame.ReturnPC);
         }
 
         public void NewLine(SpanLocation memory)
         {
+            log.Debug("NewLine");
+
             machine.Output.Write(Environment.NewLine);
             machine.SetPC(memory.Address + Size);
         }
 
         public void Print(SpanLocation memory)
         {
+            log.Debug($"Print {Text}");
             machine.Output.Write(Text);
             machine.SetPC(memory.Address + Size);
         }

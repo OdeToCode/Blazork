@@ -73,7 +73,6 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             }
 
             DumpToLog(memory, Size);
-            Operation.Execute(memory);
         }
 
         public void GetProp(SpanLocation location)
@@ -86,12 +85,12 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 var propertyValue = gameObject.Properties[propertyNumber];
                 if (propertyValue.Size == 1)
                 {
-                    log.Verbose($"\tGetProp for {objecNumber}[{propertyNumber}] found {propertyValue.Value.Span[0]:X} => {StoreResult}");
+                    log.Debug($"\tGetProp for {objecNumber}[{propertyNumber}] found {propertyValue.Value.Span[0]:X} => {StoreResult}");
                     machine.SetVariable(StoreResult, propertyValue.Value.Span[0]);
                 }
                 else if (propertyValue.Size == 2)
                 {
-                    log.Verbose($"\tGetProp for {objecNumber}[{propertyNumber}] found {Bits.MakeWord(propertyValue.Value.Span)} => {StoreResult}");
+                    log.Debug($"\tGetProp for {objecNumber}[{propertyNumber}] found {Bits.MakeWord(propertyValue.Value.Span)} => {StoreResult}");
                     machine.SetVariable(StoreResult, Bits.MakeWord(propertyValue.Value.Span));
                 }
                 else
@@ -102,7 +101,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             else
             {
                 var propertyValue = machine.ObjectTable.GetDefault(propertyNumber);
-                log.Verbose($"\tGetProp for {objecNumber}[{propertyNumber}] took default {propertyValue} => {StoreResult}");
+                log.Debug($"\tGetProp for {objecNumber}[{propertyNumber}] took default {propertyValue} => {StoreResult}");
 
                 machine.SetVariable(StoreResult, propertyValue);
             }
@@ -117,6 +116,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var b = Operands[1].SignedValue;
             var result = a < b;
 
+            log.Debug($"\tJL {result} to {Branch.Offset} on {Branch.BranchOnTrue}");
+
             Branch.Go(result, machine, Size, location);
         }
 
@@ -129,6 +130,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var child = machine.ObjectTable.GetObject(childNumber);
             var result = child.Parent == parentNumber;
 
+            log.Debug($"\tJin {result} on obj {childNumber} in {parentNumber} offset {Branch.Offset} on {Branch.BranchOnTrue}");
+
             Branch.Go(result, machine, Size, location);
         }
 
@@ -136,6 +139,9 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         {
             var objectNumber = Operands[0].Value;
             var attribute = Operands[1].Value;
+
+            log.Debug($"\tSetAttr {attribute} on {objectNumber} to true");
+
             machine.ObjectTable.GetObject(objectNumber).SetAttribute(attribute, true);
             machine.SetPC(location.Address + Size);
         }
@@ -144,6 +150,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         {
             var target = Operands[0].Value;
             var destination = Operands[1].Value;
+
+            log.Debug($"\tInsertObj {target} to {destination}");
 
             machine.ObjectTable.InsertObject(target, destination);
             machine.SetPC(location.Address + Size);
@@ -157,8 +165,10 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             value -= 1;
             machine.SetVariable(variable, value);
-
             var result = value < Operands[1].Value;
+
+            log.Debug($"\tDecChk {value} is {result} to {Branch.Offset} when {Branch.BranchOnTrue}");
+
             Branch.Go(result, machine, Size, location);
         }
 
@@ -170,8 +180,10 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             value += 1;
             machine.SetVariable(variable, value);
-
             var result = value > Operands[1].Value;
+
+            log.Debug($"\tIncChk {value} is {result} to {Branch.Offset} when {Branch.BranchOnTrue}");
+
             Branch.Go(result, machine, Size, location);
         }
 
@@ -182,7 +194,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var attributeNumber = Operands[1].Value;
             var result = gameObject.ReadAttribute(attributeNumber);
 
-            log.Verbose($"\tTestAttr for {objectNumber}[{attributeNumber}] got {result}");
+            log.Debug($"\tTestAttr for {objectNumber}[{attributeNumber}] got {result}");
 
             Branch.Go(result, machine, Size, location);
         }
@@ -192,6 +204,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var a = Operands[0].Value;
             var b = Operands[1].Value;
             var result = a & b;
+
+            log.Debug($"\tAnd {a} {b} is {result} => {StoreResult}");
 
             machine.SetVariable(StoreResult, result);
             machine.SetPC(location.Address + Size);
@@ -207,6 +221,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var variable = Operands[0].Value;
             var value = Operands[1].Value;
 
+            log.Debug($"\tStoreB {value} -> {variable}");
+
             machine.SetVariable(variable, value);
             machine.SetPC(location.Address + Size);
         }
@@ -217,6 +233,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var index = Operands[1].Value;
             var arrayLocation = baseArray + index;
             var value = machine.Memory.ByteAt(arrayLocation);
+
+            log.Debug($"\tLoadB from {arrayLocation} is {value} -> {StoreResult}");
 
             machine.SetVariable(StoreResult, value);
             machine.SetPC(location.Address + Size);
@@ -229,7 +247,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var arrayLocation = baseArray + (2 * index);
             var word = machine.Memory.WordAt(arrayLocation);
 
-            log.Verbose($"\tLoadW {baseArray:X} {index:X} is at {arrayLocation:X} loaded {word:X} => {StoreResult}");
+            log.Debug($"\tLoadW {baseArray:X} {index:X} is at {arrayLocation:X} loaded {word:X} => {StoreResult}");
 
             machine.SetVariable(StoreResult, word);
             machine.SetPC(location.Address + Size);
@@ -241,6 +259,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var b = Operands[1].SignedValue;
             var result = a - b;
 
+            log.Debug($"\tSub {a:X}({a}) {b:X}({b}) is {result:X}({result}) => {StoreResult}");
+
             machine.SetVariable(StoreResult, result);
             machine.SetPC(memory.Address + Size);
         }
@@ -251,7 +271,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var b = Operands[1].SignedValue;
             var result = a + b;
 
-            log.Verbose($"\tAdd {a:X}({a}) {b:X}({b}) is {result:X}({result}) => {StoreResult}");
+            log.Debug($"\tAdd {a:X}({a}) {b:X}({b}) is {result:X}({result}) => {StoreResult}");
 
             machine.SetVariable(StoreResult, result);
             machine.SetPC(memory.Address + Size);
@@ -263,6 +283,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var b = Operands[1].SignedValue;
             var result = a > b;
 
+            log.Debug($"\tJG: {a:X} {b:X} is {result} go {Branch.Offset} on {Branch.BranchOnTrue}");
+
             Branch.Go(result, machine, Size, location);
         }
 
@@ -272,7 +294,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var b = Operands[1].Value;
             var result = a == b;
 
-            log.Verbose($"\tJE: {a:X} {b:X} is {result}");
+            log.Debug($"\tJE: {a:X} {b:X} is {result} go {Branch.Offset} on {Branch.BranchOnTrue}");
 
             Branch.Go(result, machine, Size, location);
         }

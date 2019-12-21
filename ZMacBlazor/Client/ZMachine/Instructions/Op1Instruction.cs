@@ -47,7 +47,6 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             }
            
             DumpToLog(memory, Size);
-            Operation.Execute(memory);
         }
 
         public void PrintPaddr(SpanLocation location)
@@ -57,6 +56,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var stringDecoder = new ZStringDecoder(machine);
             var text = stringDecoder.Decode(machine.Memory.SpanAt(unpacked));
             machine.Output.Write(Text);
+
+            log.Debug($"\tPrintPaddr @ {unpacked:X}");
             machine.SetPC(location.Address + Size);
         }
 
@@ -67,6 +68,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             value += 1;
 
+            log.Debug($"\tInc {value} => {variable}");
             machine.SetVariable(variable, value);
             machine.SetPC(location.Address + Size);
         }
@@ -78,6 +80,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             value -= 1;
 
+            log.Debug($"\tDec {value} => {variable}");
             machine.SetVariable(variable, value);
             machine.SetPC(location.Address + Size);
         }
@@ -89,8 +92,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var siblingNumber = gameObject.Sibling;
             var hasSibling = siblingNumber != 0;
 
-            log.Verbose($"GetSibling for {objectNumber} is {siblingNumber} => {StoreResult}");
-
+            log.Debug($"\tGetSibling for {objectNumber} is {siblingNumber} => {StoreResult}");
             machine.SetVariable(StoreResult, siblingNumber);
             Branch.Go(hasSibling, machine, Size, location);
         }
@@ -102,6 +104,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var childNumber = gameObject.Child;
             var hasChild = childNumber != 0;
 
+            log.Debug($"\tGetChild for {objectNumber} is {childNumber} => {StoreResult}");
             machine.SetVariable(StoreResult, hasChild ? 1 : 0);
             Branch.Go(hasChild, machine, Size, location);
         }
@@ -112,6 +115,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var gameObject = machine.ObjectTable.GetObject(objectNumber);
             var parentNumber = gameObject.Parent;
 
+            log.Debug($"\tGetParent for {objectNumber} is {parentNumber} => {StoreResult}");
             machine.SetVariable(StoreResult, parentNumber);
             machine.SetPC(location.Address + Size);
         }
@@ -120,6 +124,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         {
             var number = Operands[0].Value;
             var gameObject = machine.ObjectTable.GetObject(number);
+
+            log.Debug($"\tPrintObj {number}");
             machine.Output.Write(gameObject.Description);
             machine.SetPC(location.Address + Size);
         }
@@ -129,7 +135,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var value = Operands[0].Value;
             var result = value == 0;
 
-            log.Verbose($"\tJZ {value:X} is {result}");
+            log.Debug($"\tJZ {value:X} is {result}");
 
             Branch.Go(result, machine, Size, location);
         }
@@ -138,6 +144,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         {
             var returnValue = Operands[0].Value;
             var frame = machine.StackFrames.PopFrame();
+
+            log.Debug($"\tRet to {frame.ReturnPC:X}");
 
             machine.SetVariable(frame.StoreVariable, returnValue);
             machine.SetPC(frame.ReturnPC);
@@ -152,7 +160,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             // disassembler is confused by it.
             var offset = Operands[0].SignedValue + 1;
 
-            log.Verbose($"\tJump {offset:X} to {(location.Address + offset):X}");
+            log.Debug($"\tJump {offset:X} to {(location.Address + offset):X}");
 
             machine.SetPC(location.Address + offset);
         }

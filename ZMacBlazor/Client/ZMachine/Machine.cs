@@ -36,7 +36,7 @@ namespace ZMacBlazor.Client.ZMachine
                 var memory = Memory.SpanAt(PC);
                 var instruction = Decoder.Decode(memory);
 
-                Logger.Verbose($"Executing instruction #{i:N0}");
+                Logger.Debug($"Executing instruction #{i:N0}");
                 instruction.Prepare(memory);
                 instruction.Execute(memory);
 
@@ -51,7 +51,7 @@ namespace ZMacBlazor.Client.ZMachine
             }
             else if (variableNumber <= 15)
             {
-                Logger.Information($"\tSetWordVariable varNum:{variableNumber} value:{value} localsCount:{StackFrames.Locals.Length}");
+                Logger.Verbose($"\tSetWordVariable varNum:{variableNumber} value:{value} localsCount:{StackFrames.Locals.Length}");
                 StackFrames.Locals[variableNumber - 1] = value;
             }
             else if (variableNumber <= 255)

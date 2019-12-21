@@ -26,7 +26,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             sb.Append($"\t{ToString()}");
             sb.Append($"\t{memory.ToString(size)}");
 
-            log.Information(sb.ToString());
+            log.Verbose(sb.ToString());
         }
 
         public override string ToString()
