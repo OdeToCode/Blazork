@@ -109,10 +109,10 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var baseArray = Operands[0].Value;
             var index = Operands[1].Value;
             var arrayLocation = baseArray + (2 * index);
-            
-            var entry = machine.Memory.SpanAt(arrayLocation, 2);
             var value = Operands[2].Value;
-            
+
+            machine.Memory.StoreWordAt(arrayLocation, value);
+
             machine.SetPC(location.Address + Size);
         }
 
@@ -121,7 +121,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var callAddress = machine.Memory.Unpack(Operands[0].Value);
             var methodMemory = machine.Memory.SpanAt(callAddress);
             var method = new MethodDescriptor(methodMemory, machine);
-            var capturedArgs = Operands.Select(o => o.Value).ToList();
+            var capturedArgs = Operands.Skip(1).Select(o => o.Value).ToList();
             
             var newFrame = new StackFrame(memory.Address + Size,
                                           method.LocalsCount, StoreResult);
@@ -129,7 +129,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             
             for(var i = 1; i < capturedArgs.Count; i++)
             {
-                machine.SetVariable(i, capturedArgs[i]);
+                machine.SetVariable(i, capturedArgs[i-1]);
             }
 
             machine.SetPC(callAddress + method.HeaderSize);

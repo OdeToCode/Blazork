@@ -30,11 +30,12 @@ namespace ZMacBlazor.Client.ZMachine
 
         public void Execute()
         {
-            var i = 4000;
-            while(--i > 0)
+            var i = 0;
+            while(i++ < 5000)
             {
                 var memory = Memory.SpanAt(PC);
                 var instruction = Decoder.Decode(memory);
+                Logger.Verbose($"Executing instruction #{i:N0}");
                 instruction.Execute(memory);
             }
         }
