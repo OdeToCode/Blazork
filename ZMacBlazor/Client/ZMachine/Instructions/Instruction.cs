@@ -46,7 +46,12 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             return sb.ToString();
         }
 
-        public abstract void Execute(SpanLocation memory);
+        public abstract void Prepare(SpanLocation memory);
+
+        public virtual void Execute(SpanLocation memory)
+        {
+            Operation.Execute(memory);
+        }
 
         public OperandCollection Operands { get; }
         public Operation Operation { get; protected set; }

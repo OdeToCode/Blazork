@@ -29,7 +29,7 @@ namespace ZMacBlazor.Tests.ZMachine
             var decoder = new InstructionDecoder(machine);
             var memory = machine.Memory.SpanAt(machine.PC);
             var instruction = decoder.Decode(memory);
-            instruction.Execute(memory);
+            instruction.Prepare(memory);
 
             Assert.NotNull(instruction as VarInstruction);
             Assert.Equal("Call", instruction.Operation.Name);
@@ -40,7 +40,7 @@ namespace ZMacBlazor.Tests.ZMachine
 
             memory = machine.Memory.SpanAt(machine.PC);
             instruction = decoder.Decode(memory);
-            instruction.Execute(memory);
+            instruction.Prepare(memory);
 
             Assert.NotNull(instruction as VarInstruction);
             Assert.Equal("Call", instruction.Operation.Name);
@@ -51,7 +51,7 @@ namespace ZMacBlazor.Tests.ZMachine
 
             memory = machine.Memory.SpanAt(machine.PC);
             instruction = decoder.Decode(memory);
-            instruction.Execute(memory);
+            instruction.Prepare(memory);
 
             Assert.NotNull(instruction as Op2Instruction);
             Assert.Equal("Add", instruction.Operation.Name);

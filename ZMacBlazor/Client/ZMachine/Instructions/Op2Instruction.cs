@@ -17,7 +17,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             branchResolver = new BranchResolver();
         }
 
-        public override void Execute(SpanLocation memory)
+        public override void Prepare(SpanLocation memory)
         {
             OpCode = Bits.BottomFive(memory.Bytes[0]);
             Operation = OpCode switch

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace ZMacBlazor.Client.ZMachine.Instructions
 {
@@ -14,7 +13,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             branchResolver = new BranchResolver();
         }
 
-        public override void Execute(SpanLocation memory)
+        public override void Prepare(SpanLocation memory)
         {
             Size = 1;
             OpCode = Bits.BottomFour(memory.Bytes[0]);

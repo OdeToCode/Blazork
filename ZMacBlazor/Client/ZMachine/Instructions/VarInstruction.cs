@@ -10,7 +10,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             operandResolver = new VarOperandResolver();
         }
 
-        public override void Execute(SpanLocation memory)
+        public override void Prepare(SpanLocation memory)
         {
             operandResolver.AddOperands(Operands, memory.Bytes.Slice(1));
 
@@ -112,7 +112,6 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var value = Operands[2].Value;
 
             machine.Memory.StoreWordAt(arrayLocation, value);
-
             machine.SetPC(location.Address + Size);
         }
 

@@ -16,10 +16,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             HasText = hasText;
         }
 
-        public void Execute(SpanLocation location)
-        {
-            Method(location);
-        }
+        public void Execute(SpanLocation location) => Method(location);
 
         public bool HasBranch { get; }
         public bool HasStore { get; }

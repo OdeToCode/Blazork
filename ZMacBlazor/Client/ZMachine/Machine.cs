@@ -35,8 +35,11 @@ namespace ZMacBlazor.Client.ZMachine
             {
                 var memory = Memory.SpanAt(PC);
                 var instruction = Decoder.Decode(memory);
+
                 Logger.Verbose($"Executing instruction #{i:N0}");
+                instruction.Prepare(memory);
                 instruction.Execute(memory);
+
             }
         }
 

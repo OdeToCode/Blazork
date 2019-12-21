@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using ZMacBlazor.Client.ZMachine.Text;
 
 namespace ZMacBlazor.Client.ZMachine.Instructions
@@ -17,7 +14,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             branchResolver = new BranchResolver();
         }
 
-        public override void Execute(SpanLocation memory)
+        public override void Prepare(SpanLocation memory)
         {
             operandResolver.AddOperands(Operands, memory.Bytes);
 
