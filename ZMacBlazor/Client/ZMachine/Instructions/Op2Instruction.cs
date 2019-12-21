@@ -23,6 +23,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             Operation = OpCode switch
             {
                 0x01 => new Operation(nameof(JE), JE, hasBranch: true),
+                0x02 => new Operation(nameof(JL), JL, hasBranch: true),
                 0x03 => new Operation(nameof(JG), JG, hasBranch: true),
                 0x04 => new Operation(nameof(DecChk), DecChk, hasBranch: true),
                 0x05 => new Operation(nameof(IncChk), IncChk, hasBranch: true),
@@ -40,14 +41,14 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 _ => throw new InvalidOperationException($"Unknown OP2 opcode {OpCode:X}")
             };
 
-            if(OpCode == 0x05)
+            if (OpCode == 0x05)
             {
                 // 😒 seven Z-machine opcodes access variables but by their numbers ... 
                 // inc, dec, inc_chk, dec_chk, store, pull, load. 😒
                 indirectOperandResolver.AddOperands(Operands, memory.Bytes.Slice(1));
                 Size = 1 + Operands.Size;
             }
-            else if (Bits.SevenSixSet(memory.Bytes[0]) == true && 
+            else if (Bits.SevenSixSet(memory.Bytes[0]) == true &&
                      Bits.FiveSet(memory.Bytes[0]) == false)
             {
                 // 😒 2OPS, but VAR operands 😒
@@ -83,12 +84,12 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             if (gameObject.Properties.ContainsKey(propertyNumber))
             {
                 var propertyValue = gameObject.Properties[propertyNumber];
-                if(propertyValue.Size == 1)
+                if (propertyValue.Size == 1)
                 {
                     log.Verbose($"\tGetProp for {objecNumber}[{propertyNumber}] found {propertyValue.Value.Span[0]:X} => {StoreResult}");
                     machine.SetVariable(StoreResult, propertyValue.Value.Span[0]);
                 }
-                else if(propertyValue.Size == 2)
+                else if (propertyValue.Size == 2)
                 {
                     log.Verbose($"\tGetProp for {objecNumber}[{propertyNumber}] found {Bits.MakeWord(propertyValue.Value.Span)} => {StoreResult}");
                     machine.SetVariable(StoreResult, Bits.MakeWord(propertyValue.Value.Span));
@@ -108,6 +109,15 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             machine.SetPC(location.Address + Size);
 
+        }
+
+        public void JL(SpanLocation location)
+        {
+            var a = Operands[0].SignedValue;
+            var b = Operands[1].SignedValue;
+            var result = a < b;
+
+            Branch.Go(result, machine, Size, location);
         }
 
         public void Jin(SpanLocation location)
@@ -151,13 +161,13 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var result = value < Operands[1].Value;
             Branch.Go(result, machine, Size, location);
         }
-        
+
         public void IncChk(SpanLocation location)
         {
             // inc_chk is indirect
             var variable = Operands[0].RawValue;
             var value = machine.ReadVariable(variable);
-            
+
             value += 1;
             machine.SetVariable(variable, value);
 
@@ -196,7 +206,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
             var variable = Operands[0].Value;
             var value = Operands[1].Value;
-            
+
             machine.SetVariable(variable, value);
             machine.SetPC(location.Address + Size);
         }
@@ -246,7 +256,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             machine.SetVariable(StoreResult, result);
             machine.SetPC(memory.Address + Size);
         }
-        
+
         public void JG(SpanLocation location)
         {
             var a = Operands[0].SignedValue;
