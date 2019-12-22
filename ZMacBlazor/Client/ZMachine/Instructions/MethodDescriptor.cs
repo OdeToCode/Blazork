@@ -37,8 +37,8 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
         public int LocalsCount { get; }
         public int StartAddress { get; }
-        public ICollection<int> InitialValues { get; }
+        public IList<int> InitialValues { get; }
         public int HeaderSize { get; set; }
-        readonly static ICollection<int> Empty = new List<int>();
+        readonly static IList<int> Empty = new List<int>();
     }
 }

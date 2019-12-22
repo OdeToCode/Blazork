@@ -140,7 +140,12 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                                           method.LocalsCount, StoreResult);
             machine.StackFrames.PushFrame(newFrame);
             
-            for(var i = 1; i < capturedArgs.Count; i++)
+            for(var i = 1; i <= method.InitialValues.Count; i++)
+            {
+                machine.SetVariable(i, method.InitialValues[i-1]);
+            }
+
+            for(var i = 1; i <= capturedArgs.Count; i++)
             {
                 machine.SetVariable(i, capturedArgs[i-1]);
             }

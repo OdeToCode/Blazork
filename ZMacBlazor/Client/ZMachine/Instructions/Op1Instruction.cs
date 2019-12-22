@@ -105,7 +105,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var hasChild = childNumber != 0;
 
             log.Debug($"\tGetChild for {objectNumber} is {childNumber} => {StoreResult}");
-            machine.SetVariable(StoreResult, hasChild ? 1 : 0);
+            machine.SetVariable(StoreResult, childNumber);
             Branch.Go(hasChild, machine, Size, location);
         }
 
@@ -160,7 +160,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             // disassembler is confused by it.
             var offset = Operands[0].SignedValue + 1;
 
-            log.Debug($"\tJump {offset:X} to {(location.Address + offset):X}");
+            log.Debug($"\tJump {offset} to {(location.Address + offset):X}");
 
             machine.SetPC(location.Address + offset);
         }
