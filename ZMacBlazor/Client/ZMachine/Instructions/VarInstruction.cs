@@ -44,7 +44,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
 
         public void Pull(SpanLocation location)
         {
-            if(machine.Version == 0x06)
+            if (machine.Version == 0x06)
             {
                 throw new NotImplementedException("Could be a user stack");
             }
@@ -105,7 +105,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var gameProperty = gameObject.Properties[propertyNumber];
             var value = Operands[2].Value;
 
-            if(gameProperty.Value.Length > 2)
+            if (gameProperty.Value.Length > 2)
             {
                 throw new InvalidOperationException("Illegal to PutProp on a property larger than 2 bytes");
             }
@@ -132,27 +132,36 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
         public void Call(SpanLocation memory)
         {
             var callAddress = machine.Memory.Unpack(Operands[0].Value);
-            var methodMemory = machine.Memory.SpanAt(callAddress);
-            var method = new MethodDescriptor(methodMemory, machine);
-            var capturedArgs = Operands.Skip(1).Select(o => o.Value).ToList();
-            
-            var newFrame = new StackFrame(memory.Address + Size,
-                                          method.LocalsCount, StoreResult);
-            machine.StackFrames.PushFrame(newFrame);
-            
-            for(var i = 1; i <= method.InitialValues.Count; i++)
+
+            if (callAddress == 0)
             {
-                machine.SetVariable(i, method.InitialValues[i-1]);
+                machine.SetVariable(StoreResult, 0);
+                log.Debug($"\tCall {callAddress:X} -> {StoreResult}");
+                machine.SetPC(memory.Address + Size);
             }
-
-            for(var i = 1; i <= capturedArgs.Count; i++)
+            else
             {
-                machine.SetVariable(i, capturedArgs[i-1]);
+                var methodMemory = machine.Memory.SpanAt(callAddress);
+                var method = new MethodDescriptor(methodMemory, machine);
+                var capturedArgs = Operands.Skip(1).Select(o => o.Value).ToList();
+
+                var newFrame = new StackFrame(memory.Address + Size,
+                                              method.LocalsCount, StoreResult);
+                machine.StackFrames.PushFrame(newFrame);
+
+                for (var i = 1; i <= method.InitialValues.Count; i++)
+                {
+                    machine.SetVariable(i, method.InitialValues[i - 1]);
+                }
+
+                for (var i = 1; i <= capturedArgs.Count; i++)
+                {
+                    machine.SetVariable(i, capturedArgs[i - 1]);
+                }
+
+                log.Debug($"\tCall {callAddress:X} with {capturedArgs.Aggregate(new StringBuilder(), (sb, v) => sb.Append(v.ToString("X") + " "), sb => sb)}");
+                machine.SetPC(callAddress + method.HeaderSize);
             }
-
-            log.Debug($"\tCall {callAddress:X} with {capturedArgs.Aggregate(new StringBuilder(), (sb, v) => sb.Append(v.ToString("X") + " "), sb => sb)}");
-
-            machine.SetPC(callAddress + method.HeaderSize);
         }
 
         VarOperandResolver operandResolver;
