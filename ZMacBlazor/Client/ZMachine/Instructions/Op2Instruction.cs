@@ -178,7 +178,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var variable = Operands[0].RawValue;
             var value = machine.ReadVariable(variable);
 
-            value += 1;
+            value = (short)(value + 1);
             machine.SetVariable(variable, value);
             var result = value > Operands[1].Value;
 

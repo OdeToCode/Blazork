@@ -22,6 +22,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
                 0x00 => new Operation(nameof(RetTrue), RetTrue),
                 0x01 => new Operation(nameof(RetFalse), RetFalse),
                 0x02 => new Operation(nameof(Print), Print, hasText: true),
+                0x08 => new Operation(nameof(RetPopped), RetPopped),
                 0x0B => new Operation(nameof(NewLine), NewLine),
                 _ => throw new InvalidOperationException($"Unknown OP0 opcode {OpCode:X}")
             };
@@ -47,12 +48,23 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             DumpToLog(memory, Size);
         }
 
+        public void RetPopped(SpanLocation location)
+        {
+            var returnValue = machine.StackFrames.RoutineStack.Pop();
+            var frame = machine.StackFrames.PopFrame();
+
+            log.Debug($"RetPopped {returnValue} to {frame.ReturnPC:X}");
+
+            machine.SetVariable(frame.StoreVariable, returnValue);
+            machine.SetPC(frame.ReturnPC);
+        }
+
         public void RetFalse(SpanLocation location)
         {
             var returnValue = 0;
             var frame = machine.StackFrames.PopFrame();
 
-            log.Debug($"RetFalse to {frame.ReturnPC}");
+            log.Debug($"RetFalse to {frame.ReturnPC:X}");
 
             machine.SetVariable(frame.StoreVariable, returnValue);
             machine.SetPC(frame.ReturnPC);
@@ -63,7 +75,7 @@ namespace ZMacBlazor.Client.ZMachine.Instructions
             var returnValue = 1;
             var frame = machine.StackFrames.PopFrame();
 
-            log.Debug($"RetTrue to {frame.ReturnPC}");
+            log.Debug($"RetTrue to {frame.ReturnPC:X}");
 
             machine.SetVariable(frame.StoreVariable, returnValue);
             machine.SetPC(frame.ReturnPC);
