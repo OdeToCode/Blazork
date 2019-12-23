@@ -110,7 +110,20 @@ namespace ZMacBlazor.Client.ZMachine.Text
 
         private (char? letter, string? abbreviation) Translate(int value)
         {
-            if(state == State.Abbr)
+            if(state == State.TenBit2)
+            {
+                tenBits = value << 5;
+                state = State.TenBit1;
+                return (null, null);
+            }
+            else if(state == State.TenBit1)
+            {
+                tenBits += value;
+                state = State.A0;
+
+                return ((char)(tenBits), null);
+            }
+            else if(state == State.Abbr)
             {
                 var set = abbreviationSet;
 
@@ -146,7 +159,7 @@ namespace ZMacBlazor.Client.ZMachine.Text
                 3 => State.Abbr,
                 4 => State.A1,
                 5 => State.A2,
-                6 when state == State.A2 => throw new NotImplementedException("10 bit encoding not implemented yet"),
+                6 when state == State.A2 => State.TenBit2,
                 _ => throw new InvalidOperationException($"Unknown ZSCII translate value {value:X}")
             };
            
@@ -159,11 +172,12 @@ namespace ZMacBlazor.Client.ZMachine.Text
             return (null, null);
         }
 
+        int tenBits = 0;
         int abbreviationSet = 0;
         State state = State.A0;
         readonly static Dictionary<int, char>[] alphabetMap;
         private readonly ILogger log;
 
-        enum State { A0, A1, A2, Abbr };
+        enum State { A0, A1, A2, Abbr, TenBit2, TenBit1 };
     }
 }
