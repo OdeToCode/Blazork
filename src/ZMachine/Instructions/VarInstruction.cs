@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Blazork.ZMachine.Text;
+using System;
 using System.Linq;
 using System.Text;
 
@@ -22,6 +23,7 @@ namespace Blazork.ZMachine.Instructions
                 0x00 => new Operation(nameof(Call), Call, hasStore: true),
                 0x01 => new Operation(nameof(StoreW), StoreW),
                 0x03 => new Operation(nameof(PutProp), PutProp),
+                0x04 => new Operation(nameof(Read), Read),
                 0x05 => new Operation(nameof(PrintChar), PrintChar),
                 0x06 => new Operation(nameof(PrintNum), PrintNum),
                 0x08 => new Operation(nameof(Push), Push),
@@ -40,6 +42,19 @@ namespace Blazork.ZMachine.Instructions
             }
 
             DumpToLog(memory, Size);
+        }
+
+        public void Read(SpanLocation location)
+        {
+            if(machine.Version > 0x03)
+            {
+                throw new NotImplementedException("Not for v3+ yet");
+            }
+
+            var textBufferAddress = Operands[0].Value;
+            var parseBufferAddress = Operands[1].Value;
+
+            var textBuffer = new TextBuffer(machine.Memory.MemoryAt(textBufferAddress));
         }
 
         public void Pull(SpanLocation location)
