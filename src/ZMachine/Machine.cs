@@ -61,7 +61,7 @@ namespace Blazork.ZMachine
 
                 var (msb, lsb) = Bits.BreakWord(value);
 
-                var address = Bits.MakeWord(Memory.Globals) + ((variableNumber - 16) * 2);
+                var address = Bits.MakeWord(Memory.GlobalsAddress) + ((variableNumber - 16) * 2);
                 var place = Memory.SpanAt(address, 2);
                 place.Bytes[0] = msb;
                 place.Bytes[1] = lsb;
@@ -84,7 +84,7 @@ namespace Blazork.ZMachine
             }
             else if(variableNumber <= 255)
             {
-                var address = Bits.MakeWord(Memory.Globals) + ((variableNumber - 16) * 2);
+                var address = Bits.MakeWord(Memory.GlobalsAddress) + ((variableNumber - 16) * 2);
                 var value = Memory.SpanAt(address, 2);
                 return Bits.MakeWord(value.Bytes);
             }

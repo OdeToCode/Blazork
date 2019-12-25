@@ -36,10 +36,10 @@ namespace Blazork.Tests.ZMachine
             var memory = machine.Memory;
 
             Assert.Equal(3, memory.Version);
-            Assert.Equal(20023, memory.HighMemory);
+            Assert.Equal(20023, memory.HighMemoryAddress);
             Assert.Equal(0x4F05, memory.StartingProgramCounter);
-            Assert.Equal(0x02B0, memory.ObjectTable);
-            Assert.Equal(15137, memory.Dictionary);
+            Assert.Equal(0x02B0, memory.ObjectTableAddress);
+            Assert.Equal(15137, memory.DictionaryAddress);
         }
     }
 }

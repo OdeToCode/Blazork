@@ -48,11 +48,11 @@ namespace Blazork.ZMachine
                 case 0x07:
                     if (print)
                     {
-                        return ((address * 4) + (8 * StringOffset));
+                        return ((address * 4) + (8 * StringOffsetAddress));
                     }
                     else
                     {
-                        return ((address * 4) + (8 * RoutineOffset));
+                        return ((address * 4) + (8 * RoutineOffsetAddress));
                     }
                 case 0x08:
                     return (address * 8);
@@ -93,11 +93,11 @@ namespace Blazork.ZMachine
 
         public byte Version => contents[Header.VERSION];
     
-        public int HighMemory => Bits.MakeWord(SpanAt(Header.HIGHMEMORY).Bytes);
+        public int HighMemoryAddress => Bits.MakeWord(SpanAt(Header.HIGHMEMORY).Bytes);
 
-        public int RoutineOffset => Bits.MakeWord(SpanAt(Header.ROUTINESOFFSET).Bytes);
+        public int RoutineOffsetAddress => Bits.MakeWord(SpanAt(Header.ROUTINESOFFSET).Bytes);
 
-        public int StringOffset => Bits.MakeWord(SpanAt(Header.STATICSTRINGSOFFSET).Bytes);
+        public int StringOffsetAddress => Bits.MakeWord(SpanAt(Header.STATICSTRINGSOFFSET).Bytes);
 
         public int StartingProgramCounter 
         {
@@ -114,11 +114,11 @@ namespace Blazork.ZMachine
             }
         }
 
-        public Span<byte> Globals => SpanAt(Header.GLOBALS).Bytes;
+        public Span<byte> GlobalsAddress => SpanAt(Header.GLOBALS).Bytes;
 
-        public int Dictionary => Bits.MakeWord(SpanAt(Header.DICTIONARY).Bytes);
+        public int DictionaryAddress => Bits.MakeWord(SpanAt(Header.DICTIONARY).Bytes);
 
-        public int ObjectTable => Bits.MakeWord(SpanAt(Header.OBJECTTABLE).Bytes);
+        public int ObjectTableAddress => Bits.MakeWord(SpanAt(Header.OBJECTTABLE).Bytes);
 
         public int FileLength
         {
