@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Blazork.ZMachine.Text
 {
     public class ParseDictionary
     {
         private readonly Machine machine;
+        private readonly char[] space = new char[] { ' ' };
 
         public ParseDictionary(Machine machine)
         {

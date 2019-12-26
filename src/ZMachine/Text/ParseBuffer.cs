@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Blazork.ZMachine.Text
 {
@@ -14,6 +12,11 @@ namespace Blazork.ZMachine.Text
         {
             this.memory = memory;
             MaxLength = memory.Bytes.Span[0] - 1;
+
+            if(MaxLength <= 6)
+            {
+                throw new InvalidOperationException("Parse buffer size indicates a bug");
+            }
         }
     }
 }

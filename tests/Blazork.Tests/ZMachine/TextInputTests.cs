@@ -2,15 +2,37 @@
 using Blazork.ZMachine;
 using Blazork.ZMachine.Text;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 using Xunit;
 
 namespace Blazork.Tests.ZMachine
 {
     public class TextInputTests
     {
+        [Fact]
+        public void CanTokensize()
+        {
+            using var file = File.OpenRead(@"Data\ZORK1.DAT");
+            var logger = NullLoggerFactory.GetLogger();
+            var machine = new Machine(logger);
+            machine.Load(file);
+
+            var textBytes = new byte[37];
+            textBytes[0] = (byte)textBytes.Length;
+
+            var textMemory = new MemoryLocation(1, textBytes.AsMemory());
+            var textBuffer = new TextBuffer(textMemory);
+            textBuffer.Write("fred,go fishing");
+
+            var dictionary = new ParseDictionary(machine);
+            textBuffer.Tokenize(dictionary);
+
+            Assert.Equal(2, textBuffer.Tokens.Count);
+            Assert.Equal("fred,go", textBuffer.Tokens[0]);
+            Assert.Equal("fishing", textBuffer.Tokens[5]);
+        }
+
         [Fact]
         public void CanDecodeDictionary()
         {
