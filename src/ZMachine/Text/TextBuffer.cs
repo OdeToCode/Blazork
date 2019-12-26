@@ -48,11 +48,11 @@ namespace Blazork.ZMachine.Text
             {
                 if (allSeparators.Contains(Text[i]))
                 {
-                    Tokens.Add(startToken, Text.Substring(startToken, i - startToken));    
+                    Tokens.Add(startToken + 1, Text.Substring(startToken, i - startToken));    
 
                     if (Text[i] != ' ')
                     {
-                        Tokens.Add(i, Text.Substring(i, 1));
+                        Tokens.Add(i + 1, Text.Substring(i, 1));
                     }
 
                     startToken = i + 1;
@@ -60,7 +60,7 @@ namespace Blazork.ZMachine.Text
             }
             if (startToken < Text.Length)
             {
-                Tokens.Add(startToken, Text.Substring(startToken));
+                Tokens.Add(startToken + 1, Text.Substring(startToken));
             }
         }
     }

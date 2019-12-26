@@ -11,6 +11,38 @@ namespace Blazork.Tests.ZMachine
     public class TextInputTests
     {
         [Fact]
+        public void CanPopulateParseBuffer()
+        {
+            using var file = File.OpenRead(@"Data\ZORK1.DAT");
+            var logger = NullLoggerFactory.GetLogger();
+            var machine = new Machine(logger);
+            machine.Load(file);
+
+            var textBytes = new byte[37];
+            textBytes[0] = (byte)textBytes.Length;
+
+            var textMemory = new MemoryLocation(1, textBytes.AsMemory());
+            var textBuffer = new TextBuffer(textMemory);
+            textBuffer.Write("open mailbox");
+
+            var dictionary = new ParseDictionary(machine);
+            textBuffer.Tokenize(dictionary);
+
+            var parseBytes = new byte[128];
+            parseBytes[0] = (byte)parseBytes.Length;
+
+            var parseMemory = new MemoryLocation(1, parseBytes.AsMemory());
+            var parseBuffer = new ParseBuffer(parseMemory);
+            parseBuffer.Populate(textBuffer, dictionary);
+
+            Assert.Equal(2, parseBytes[0]);
+            Assert.Equal(0x46, parseBytes[1]);
+            Assert.Equal(0x88, parseBytes[2]);
+            Assert.Equal(0x04, parseBytes[3]);
+            Assert.Equal(0x01, parseBytes[4]);
+        }
+
+        [Fact]
         public void CanTokensize()
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
@@ -29,10 +61,10 @@ namespace Blazork.Tests.ZMachine
             textBuffer.Tokenize(dictionary);
 
             Assert.Equal(4, textBuffer.Tokens.Count);
-            Assert.Equal("fred", textBuffer.Tokens[0]);
-            Assert.Equal(",", textBuffer.Tokens[4]);
-            Assert.Equal("go", textBuffer.Tokens[5]);
-            Assert.Equal("fishing", textBuffer.Tokens[8]);
+            Assert.Equal("fred", textBuffer.Tokens[1]);
+            Assert.Equal(",", textBuffer.Tokens[5]);
+            Assert.Equal("go", textBuffer.Tokens[6]);
+            Assert.Equal("fishing", textBuffer.Tokens[9]);
         }
 
         [Fact]
