@@ -22,7 +22,10 @@ namespace Blazork.ZMachine.Text
         public void Write(string input)
         {
             input = input.TrimEnd('\n');
-            input = input.Substring(0, MaxLength - 1);
+            if (input.Length > MaxLength)
+            {
+                input = input.Substring(0, MaxLength - 1);
+            }
             input = input.ToLower();
 
             var i = 0;
@@ -51,8 +54,9 @@ namespace Blazork.ZMachine.Text
                     {
                         Tokens.Add(i, Text.Substring(i, 1));
                     }
+
+                    startToken = i + 1;
                 }
-                startToken = i;
             }
             if (startToken < Text.Length)
             {

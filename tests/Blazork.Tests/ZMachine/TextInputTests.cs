@@ -28,9 +28,11 @@ namespace Blazork.Tests.ZMachine
             var dictionary = new ParseDictionary(machine);
             textBuffer.Tokenize(dictionary);
 
-            Assert.Equal(2, textBuffer.Tokens.Count);
-            Assert.Equal("fred,go", textBuffer.Tokens[0]);
-            Assert.Equal("fishing", textBuffer.Tokens[5]);
+            Assert.Equal(4, textBuffer.Tokens.Count);
+            Assert.Equal("fred", textBuffer.Tokens[0]);
+            Assert.Equal(",", textBuffer.Tokens[4]);
+            Assert.Equal("go", textBuffer.Tokens[5]);
+            Assert.Equal("fishing", textBuffer.Tokens[8]);
         }
 
         [Fact]
