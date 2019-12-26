@@ -3,6 +3,7 @@ using Xunit;
 using Blazork.ZMachine;
 using Blazork.ZMachine.Instructions;
 using Blazork.Tests.Logging;
+using Blazork.Tests.Input;
 
 namespace Blazork.Tests.ZMachine
 {
@@ -12,7 +13,7 @@ namespace Blazork.Tests.ZMachine
         public void CanReturnSmallValue()
         {
             var logger = NullLoggerFactory.GetLogger();
-            var machine = new Machine(logger);
+            var machine = new Machine(logger, new SolveZorkInputStream());
 
             var operand1 = new Operand(OperandType.Small, 0xFF, machine);
             var operand2 = new Operand(OperandType.Small, 0xFE, machine);
@@ -36,7 +37,7 @@ namespace Blazork.Tests.ZMachine
         public void CanReturnLargeValue()
         {
             var logger = NullLoggerFactory.GetLogger();
-            var machine = new Machine(logger);
+            var machine = new Machine(logger, new SolveZorkInputStream());
 
             var operand1 = new Operand(OperandType.Large, 0xFFFF, machine);
             var operand2 = new Operand(OperandType.Large, 0xFFFE, machine);

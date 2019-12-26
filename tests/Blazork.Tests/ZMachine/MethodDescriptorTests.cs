@@ -5,6 +5,7 @@ using Xunit;
 using Blazork.ZMachine;
 using Blazork.ZMachine.Instructions;
 using Blazork.Tests.Logging;
+using Blazork.Tests.Input;
 
 namespace Blazork.Tests.ZMachine
 {
@@ -15,7 +16,7 @@ namespace Blazork.Tests.ZMachine
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
             var logger = NullLoggerFactory.GetLogger();
-            var machine = new Machine(logger);
+            var machine = new Machine(logger, new SolveZorkInputStream());
             machine.Load(file);
 
             var memory = machine.Memory.SpanAt(0x5472);

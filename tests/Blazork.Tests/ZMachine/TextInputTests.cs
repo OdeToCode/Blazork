@@ -1,4 +1,5 @@
-﻿using Blazork.Tests.Logging;
+﻿using Blazork.Tests.Input;
+using Blazork.Tests.Logging;
 using Blazork.ZMachine;
 using Blazork.ZMachine.Text;
 using System;
@@ -15,7 +16,7 @@ namespace Blazork.Tests.ZMachine
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
             var logger = NullLoggerFactory.GetLogger();
-            var machine = new Machine(logger);
+            var machine = new Machine(logger, new SolveZorkInputStream());
             machine.Load(file);
 
             var textBytes = new byte[37];
@@ -47,7 +48,7 @@ namespace Blazork.Tests.ZMachine
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
             var logger = NullLoggerFactory.GetLogger();
-            var machine = new Machine(logger);
+            var machine = new Machine(logger, new SolveZorkInputStream());
             machine.Load(file);
 
             var textBytes = new byte[37];
@@ -72,7 +73,7 @@ namespace Blazork.Tests.ZMachine
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
             var logger = NullLoggerFactory.GetLogger();
-            var machine = new Machine(logger);
+            var machine = new Machine(logger, new SolveZorkInputStream());
             machine.Load(file);
 
             var dictionary = new ParseDictionary(machine);

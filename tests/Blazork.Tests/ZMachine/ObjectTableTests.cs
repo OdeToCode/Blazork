@@ -3,6 +3,7 @@ using System.IO;
 using Xunit;
 using Blazork.ZMachine;
 using Blazork.Tests.Logging;
+using Blazork.Tests.Input;
 
 namespace Blazork.Tests.ZMachine
 {
@@ -13,7 +14,7 @@ namespace Blazork.Tests.ZMachine
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
             var logger = NullLoggerFactory.GetLogger();
-            var machine = new Machine(logger);
+            var machine = new Machine(logger, new SolveZorkInputStream());
             machine.Load(file);
 
             var o249 = machine.ObjectTable.GetObject(249);
@@ -34,7 +35,7 @@ namespace Blazork.Tests.ZMachine
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
             var logger = NullLoggerFactory.GetLogger();
-            var machine = new Machine(logger);
+            var machine = new Machine(logger, new SolveZorkInputStream());
             machine.Load(file);
 
             var o247 = machine.ObjectTable.GetObject(247);
@@ -61,7 +62,7 @@ namespace Blazork.Tests.ZMachine
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
             var logger = NullLoggerFactory.GetLogger();
-            var machine = new Machine(logger);
+            var machine = new Machine(logger, new SolveZorkInputStream());
             machine.Load(file);
 
             // 249 - 250
@@ -85,7 +86,7 @@ namespace Blazork.Tests.ZMachine
         {
             using var file = File.OpenRead(@"Data\ZORK1.DAT");
             var logger = NullLoggerFactory.GetLogger();
-            var machine = new Machine(logger);
+            var machine = new Machine(logger, new SolveZorkInputStream());
             machine.Load(file);
 
             Assert.Equal(0, machine.ObjectTable.GetDefault(10));

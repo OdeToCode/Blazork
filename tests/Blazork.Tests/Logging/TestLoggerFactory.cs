@@ -20,7 +20,7 @@ namespace Blazork.Tests.Logging
                                 .MinimumLevel.Override(typeof(Instruction).FullName, LogEventLevel.Debug)
                                 //.MinimumLevel.Override(typeof(ZStringDecoder).FullName, LogEventLevel.Verbose)
                                 .Enrich.FromLogContext()
-                                .WriteTo.File(@"..\..\..\..\tests.log",
+                                .WriteTo.File(@"..\..\..\..\..\tests.log",
                                              // outputTemplate: "\n{SourceContext:lj}\n{Message:lj}{NewLine}{Exception}")
                                              outputTemplate: "\n{Message:lj}{NewLine}{Exception}")
                                 .CreateLogger();

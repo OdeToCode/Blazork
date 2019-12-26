@@ -54,7 +54,18 @@ namespace Blazork.ZMachine.Instructions
             var textBufferAddress = Operands[0].Value;
             var parseBufferAddress = Operands[1].Value;
 
+            
             var textBuffer = new TextBuffer(machine.Memory.MemoryAt(textBufferAddress));
+            var parseBuffer = new ParseBuffer(machine.Memory.MemoryAt(parseBufferAddress));
+            var dictionary = machine.GetDictionary();
+
+            var input = machine.Input.Read();
+            textBuffer.Write(input);
+            textBuffer.Tokenize(dictionary);
+            parseBuffer.Populate(textBuffer, dictionary);
+
+            log.Verbose($"Read OP");
+            machine.SetPC(location.Address + Size);
         }
 
         public void Pull(SpanLocation location)

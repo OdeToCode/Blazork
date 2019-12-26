@@ -4,12 +4,13 @@ using System.IO;
 using Blazork.ZMachine.Instructions;
 using Blazork.ZMachine.Objects;
 using Blazork.ZMachine.Streams;
+using Blazork.ZMachine.Text;
 
 namespace Blazork.ZMachine
 {
     public class Machine
     {
-        public Machine(ILogger logger)
+        public Machine(ILogger logger, IInputStream inputStream)
         {
             Memory = new MachineMemory(Stream.Null);
             StackFrames = new FrameCollection(logger);
@@ -17,6 +18,7 @@ namespace Blazork.ZMachine
             Decoder = new InstructionDecoder(this);
             Output = new CompositeOutputStream(new DebugOutputStream(logger));
             Logger = logger.ForContext<Machine>();
+            Input = inputStream;
         }
 
         public void Load(Stream memoryBytes)
@@ -108,6 +110,11 @@ namespace Blazork.ZMachine
             return location;
         }
 
+        public ParseDictionary GetDictionary()
+        {
+            return new ParseDictionary(this);
+        }
+
         public byte Version => Memory.Version;
         public int PC { get; protected set; }
         public GameObjectTable ObjectTable { get; protected set; }
@@ -115,6 +122,7 @@ namespace Blazork.ZMachine
         public MachineMemory Memory { get; protected set; }
         public FrameCollection StackFrames { get; protected set; }
         public CompositeOutputStream Output { get; }
+        public IInputStream Input { get; protected set; }
         public ILogger Logger { get; }
     }
 }
