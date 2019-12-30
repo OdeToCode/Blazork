@@ -1,7 +1,23 @@
-﻿@page "/play"
+﻿@using Blazork.Client.Models;
+@page "/play/{game}"
+@inject GameModel Model
 
 <h3>Play</h3>
 
-@code {
+<div>@Model.ToString()</div>
 
+<textarea></textarea>
+
+<button>Save</button>
+<button>Load</button>
+
+@code {
+    [Parameter]
+    public string Game { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+
+    }
 }
